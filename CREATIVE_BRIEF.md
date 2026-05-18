@@ -1,6 +1,6 @@
 # Creative Direction: Gonçalo Ramalho · Online CV
 
-**Concept codename:** OPERATOR MODE
+**Concept codename:** PRODUCT CONSOLE
 **Date:** May 2026
 **Format:** Single-page interactive HTML site
 
@@ -12,7 +12,7 @@
 
 ## The concept
 
-**OPERATOR MODE** treats the CV as a working operator's console — the kind of internal tool, dashboard, and AI-augmented workflow you actually build for the companies you join. Instead of *saying* you ship internal tools and AI workflows, the site itself **is** one. The medium is the message, and the message is: *I am the bridge between design, engineering, operations, and product — and here is the proof, in working form.*
+**PRODUCT CONSOLE** treats the CV as a working product leader's console — the kind of internal tool, dashboard, and AI-augmented workflow you actually build for the companies you join. Instead of *saying* you ship internal tools and AI workflows, the site itself **is** one. The medium is the message, and the message is: *I am the bridge between design, engineering, operations, and product — and here is the proof, in working form.*
 
 This concept is uniquely defensible because almost no one else can credibly pull it off. It requires the exact stack of skills you have: designer-developer roots, product judgment, operational instincts, and now an AI-augmented building practice. Recruiters and CPOs reading this will recognize the move within five seconds — and that recognition itself is the hire pitch.
 
@@ -64,7 +64,7 @@ The 26 portfolios in the sitebuilderreport list fall into three buckets: clean S
 ## What we keep from the existing mockup
 
 - The bold serif typography for editorial moments
-- The `§ NN · LABEL` section markers (they earn their keep in OPERATOR MODE)
+- The `§ NN · LABEL` section markers (they earn their keep in PRODUCT CONSOLE)
 - The numbered stats (15 years, etc.) — promoted into the live status bar
 
 ## Success criteria
