@@ -1,0 +1,1823 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Gonçalo Ramalho — Operator Mode</title>
+<meta name="description" content="Product & Innovation Leader. I turn ambiguity into shipped work — zero-to-one, AI transformation, and platforms from design through engineering to product." />
+<meta property="og:title" content="Gonçalo Ramalho — Operator Mode" />
+<meta property="og:description" content="Product & Innovation Leader. I turn ambiguity into shipped work — 15 years between design, engineering, and product." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ============================================================
+     OPERATOR MODE — Gonçalo Ramalho
+     ============================================================ */
+  :root {
+    --ink: #0E1014;
+    --ink-2: #14171D;
+    --ink-3: #1B1F27;
+    --line: #262B36;
+    --line-2: #2F3542;
+    --mute: #6B7280;
+    --text: #C9CDD6;
+    --text-strong: #F4F1EA;
+    --signal: #3EE07F;
+    --signal-glow: rgba(62, 224, 127, .25);
+    --amber: #E8A85C;
+    --warn: #FF7A59;
+    --max: 1240px;
+    --gutter: clamp(20px, 4vw, 56px);
+    --opbar-h: 52px;
+    --serif: "Fraunces", "Times New Roman", serif;
+    --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--ink);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 400;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--signal); color: var(--ink); }
+
+  /* ============ Spotlight reveal — pattern beneath the dark ============ */
+  :root { --mx: 50vw; --my: 50vh; }
+
+  /* Hidden pattern layer — only revealed by the spotlight mask */
+  .spotlight {
+    position: fixed; inset: 0;
+    z-index: 0; pointer-events: none;
+    /* Blueprint crosshairs in a lifted shade — visible only inside the light */
+    background-image:
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='52' height='52' viewBox='0 0 52 52'><g stroke='%23404a5e' stroke-width='1.2' stroke-linecap='round' fill='none' opacity='0.9'><line x1='26' y1='20' x2='26' y2='32'/><line x1='20' y1='26' x2='32' y2='26'/></g><circle cx='26' cy='26' r='1' fill='%23404a5e' opacity='0.5'/></svg>");
+    background-size: 52px 52px;
+    background-repeat: repeat;
+    -webkit-mask-image: radial-gradient(circle 300px at var(--mx) var(--my),
+      rgba(0,0,0,1) 0%, rgba(0,0,0,.95) 25%, rgba(0,0,0,.55) 55%, rgba(0,0,0,.15) 80%, rgba(0,0,0,0) 100%);
+            mask-image: radial-gradient(circle 300px at var(--mx) var(--my),
+      rgba(0,0,0,1) 0%, rgba(0,0,0,.95) 25%, rgba(0,0,0,.55) 55%, rgba(0,0,0,.15) 80%, rgba(0,0,0,0) 100%);
+    opacity: 0;
+    transition: opacity .4s ease;
+    will-change: mask-image;
+  }
+  body.has-halo .spotlight { opacity: 1; }
+
+  /* Warm light halo — sits on top, gives the spotlight color/warmth */
+  .halo {
+    position: fixed; top: 0; left: 0;
+    width: 520px; height: 520px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at center,
+        rgba(232,168,92,.08) 0%,
+        rgba(232,168,92,.035) 32%,
+        rgba(62,224,127,.012) 60%,
+        transparent 75%);
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 0;
+    mix-blend-mode: screen;
+    opacity: 0;
+    transition: opacity .35s ease;
+    will-change: transform;
+    filter: blur(2px);
+  }
+  body.has-halo .halo { opacity: 1; }
+  @media (hover: none), (prefers-reduced-motion: reduce) {
+    .halo, .spotlight { display: none; }
+  }
+  main, header, footer { position: relative; z-index: 1; }
+
+  /* ============ Top operator bar ============ */
+  .opbar {
+    position: sticky; top: 0; z-index: 50;
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    background: rgba(14,16,20,.72);
+    border-bottom: 1px solid var(--line);
+  }
+  .opbar-inner {
+    max-width: var(--max); margin: 0 auto;
+    padding: 12px var(--gutter);
+    display: flex; align-items: center; gap: 18px;
+    font-family: var(--mono); font-size: 12px; color: var(--text);
+  }
+  .brand {
+    color: var(--text-strong); font-weight: 600; letter-spacing: .02em;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .brand .gr {
+    width: 22px; height: 22px; border-radius: 5px;
+    background: linear-gradient(135deg, var(--amber), var(--warn));
+    color: var(--ink); display: grid; place-items: center;
+    font-weight: 700; font-size: 11px; font-family: var(--mono);
+  }
+  .status-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 5px 10px; border-radius: 999px;
+    background: rgba(62,224,127,.08); border: 1px solid rgba(62,224,127,.25);
+    color: var(--signal); font-weight: 500; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .08em;
+  }
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--signal); box-shadow: 0 0 0 0 var(--signal-glow);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(62,224,127,.55); }
+    70% { box-shadow: 0 0 0 9px rgba(62,224,127,0); }
+    100% { box-shadow: 0 0 0 0 rgba(62,224,127,0); }
+  }
+  .opnav { margin-left: auto; display: flex; gap: 18px; }
+  .opnav a {
+    color: var(--text); text-decoration: none; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .08em;
+    transition: color .15s ease;
+  }
+  .opnav a:hover { color: var(--text-strong); }
+  .clock { color: var(--mute); }
+  .clock b { color: var(--text-strong); font-weight: 500; }
+  @media (max-width: 760px) {
+    .opnav { display: none; }
+    .opbar-inner { gap: 12px; }
+    .clock { display: none; }
+  }
+
+  /* ============ Sections / scaffold ============ */
+  section { padding: clamp(72px, 12vh, 140px) var(--gutter); scroll-margin-top: 64px; }
+  .wrap { max-width: var(--max); margin: 0 auto; }
+  .section-tag {
+    display: flex; align-items: center; gap: 14px;
+    font-family: var(--mono); font-size: 11px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: .14em;
+    margin-bottom: 28px;
+  }
+  .section-tag::before {
+    content: ""; display: block; height: 1px; width: 28px;
+    background: var(--line-2);
+  }
+
+  /* ============ Boot — hero fills viewport; metrics below the fold ============ */
+  .boot {
+    padding: 0 var(--gutter);
+  }
+  /* Hero = full first screen: tag + headline + lede + hint */
+  .hero {
+    min-height: calc(100vh - var(--opbar-h));
+    min-height: calc(100svh - var(--opbar-h));
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: clamp(24px, 4vh, 40px) 0 clamp(28px, 4vh, 48px);
+  }
+  .hero .section-tag { flex-shrink: 0; margin-bottom: clamp(16px, 3vh, 28px); }
+  .hero-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(20px, 3vw, 32px);
+    align-content: center;
+    min-height: 0;
+  }
+  .hero-title { max-width: 100%; }
+  .hero-copy { min-width: 0; max-width: 640px; }
+  .hero-copy .hint { margin-top: clamp(16px, 2.5vh, 24px); }
+
+  .hero-metrics {
+    display: grid;
+    padding: clamp(56px, 10vh, 96px) 0 clamp(64px, 10vh, 112px);
+    grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.95fr);
+    gap: clamp(16px, 2.5vw, 28px);
+    align-items: start;
+  }
+  @media (max-width: 960px) {
+    .hero-metrics { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .display-accent { white-space: normal; flex-wrap: wrap; }
+  }
+
+  #readme {
+    padding-top: clamp(88px, 11vh, 132px);
+  }
+
+  .display {
+    font-family: var(--serif);
+    font-weight: 350;
+    font-size: clamp(56px, 11vw, 160px);
+    line-height: .92;
+    letter-spacing: -0.025em;
+    color: var(--text-strong);
+    margin: 0;
+    font-variation-settings: "opsz" 144;
+  }
+  .display em {
+    font-style: italic; font-weight: 400;
+    color: var(--amber);
+    font-variation-settings: "opsz" 144;
+  }
+  .display-accent {
+    display: inline-flex;
+    align-items: flex-end;
+    gap: 0.12em;
+    white-space: nowrap;
+  }
+  .display .cursor {
+    flex: 0 0 auto;
+    width: max(3px, 0.09em);
+    height: 0.82em;
+    margin: 0 0 0.04em;
+    background: var(--signal);
+    border-radius: 1px;
+    animation: blink 1.1s steps(2) infinite;
+    box-shadow: 0 0 14px rgba(62,224,127,.45);
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .hero-copy .lede { margin-top: 0; }
+  .lede {
+    margin-top: 28px;
+    max-width: 520px;
+    color: var(--text);
+    font-size: clamp(16px, 1.4vw, 19px);
+    line-height: 1.55;
+  }
+  .lede strong { color: var(--text-strong); font-weight: 500; }
+
+  /* Status panel — solid fill so halo / spotlight do not bleed through */
+  .panel {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--ink-2);
+    overflow: hidden;
+  }
+  .panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    background: var(--ink-3);
+    font-family: var(--mono); font-size: 10.5px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: .14em;
+  }
+  .panel-head .dots { display: inline-flex; gap: 5px; }
+  .panel-head .dots i {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--line-2); display: inline-block;
+  }
+  .panel-head .dots i:nth-child(1) { background: #FF6155; }
+  .panel-head .dots i:nth-child(2) { background: #FFBD2E; }
+  .panel-head .dots i:nth-child(3) { background: var(--signal); }
+
+  .status-body {
+    padding: 14px 16px 18px; font-family: var(--mono); font-size: 13px;
+    background: var(--ink-2);
+  }
+  .status-row {
+    display: grid; grid-template-columns: 110px 1fr;
+    gap: 14px; padding: 8px 0; border-bottom: 1px dashed var(--line);
+  }
+  .status-row:last-child { border-bottom: 0; }
+  .status-row .k { color: var(--mute); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; padding-top: 3px; }
+  .status-row .v { color: var(--text-strong); }
+  .status-row .v small { display: block; color: var(--mute); font-size: 11px; margin-top: 2px; font-family: var(--mono); }
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+    min-width: 0;
+  }
+  .hero-metrics > .panel {
+    width: 100%;
+    min-width: 0;
+  }
+  .stat {
+    display: flex; flex-direction: column; justify-content: flex-start; gap: 10px;
+    min-height: clamp(108px, 14vw, 128px);
+    background: var(--ink-2); padding: clamp(18px, 2.5vw, 24px) clamp(16px, 2vw, 22px);
+  }
+  .stat .n {
+    font-family: var(--serif); font-weight: 350;
+    font-size: clamp(44px, 5.2vw, 62px); color: var(--text-strong);
+    line-height: 0.92; letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    display: flex; align-items: baseline; gap: 4px;
+    flex-shrink: 0;
+  }
+  .stat .n sup {
+    font-size: .42em; color: var(--signal);
+    font-family: var(--mono); font-weight: 500;
+    transform: translateY(-0.35em);
+  }
+  .stat .l {
+    display: block;
+    font-family: var(--mono); font-size: 10.5px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: .1em;
+    line-height: 1.45; max-width: none;
+    margin: 0;
+  }
+  @media (max-width: 540px) {
+    .stat { min-height: 96px; padding: 16px 14px; }
+    .stat .n { font-size: clamp(36px, 10vw, 48px); }
+    .stat .l { font-size: 10px; letter-spacing: .08em; }
+  }
+
+  /* ============ README / Manifesto ============ */
+  .manifesto {
+    font-family: var(--serif);
+    font-weight: 350;
+    font-size: clamp(26px, 3.4vw, 44px);
+    line-height: 1.22;
+    letter-spacing: -0.015em;
+    color: var(--text-strong);
+    max-width: 22ch;
+  }
+  .manifesto-grid {
+    display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(28px, 5vw, 80px);
+    align-items: start;
+  }
+  @media (max-width: 960px) { .manifesto-grid { grid-template-columns: 1fr; } }
+  .manifesto .h { color: var(--amber); font-style: italic; }
+  .manifesto .b { color: var(--signal); font-style: italic; }
+  .anno {
+    border-left: 1px solid var(--line-2);
+    padding: 0 0 0 22px;
+    margin-top: 8px;
+  }
+  .anno p {
+    margin: 0 0 18px; color: var(--text);
+    font-size: 15px; line-height: 1.65;
+  }
+  .anno p strong { color: var(--text-strong); font-weight: 500; }
+  .anno .note {
+    font-family: var(--mono); font-size: 11px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: .1em;
+    margin-bottom: 6px;
+  }
+
+  /* ============ Releases / Career ============ */
+  .releases { display: grid; gap: 14px; }
+  .release {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--ink-2);
+    overflow: hidden;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+  }
+  .release:hover { border-color: var(--line-2); background: var(--ink-3); }
+  .release.now { border-color: rgba(62,224,127,.35); background: #121a16; }
+  .release-head {
+    display: grid; grid-template-columns: 110px 1fr auto auto;
+    gap: 20px; align-items: center;
+    padding: 18px 22px; cursor: pointer;
+  }
+  .release-head .ver {
+    font-family: var(--mono); font-size: 13px; color: var(--signal);
+    font-weight: 500; letter-spacing: .02em;
+  }
+  .release.legacy .release-head .ver { color: var(--mute); }
+  .release-head .title {
+    color: var(--text-strong); font-weight: 500; font-size: 17px;
+    letter-spacing: -0.005em;
+  }
+  .release-head .title small {
+    display: block; color: var(--mute); font-weight: 400; font-size: 13px;
+    margin-top: 3px;
+  }
+  .release-head .meta {
+    font-family: var(--mono); font-size: 11px; color: var(--mute);
+    text-align: right; line-height: 1.5;
+  }
+  .release-head .meta b { color: var(--text); font-weight: 500; display: block; }
+  .release-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height .35s ease;
+    border-top: 0 solid var(--line);
+  }
+  .release.open .release-body {
+    max-height: 800px; border-top: 1px solid var(--line);
+  }
+  .release-body-inner {
+    padding: 18px 22px 26px;
+    display: grid; grid-template-columns: 110px 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 720px) {
+    .release-head { grid-template-columns: 70px 1fr auto; }
+    .release-head .meta { display: none; }
+    .release-body-inner { grid-template-columns: 1fr; }
+  }
+  .release-body ul {
+    margin: 0; padding: 0; list-style: none;
+    color: var(--text); font-size: 14.5px; line-height: 1.65;
+  }
+  .release-body li { padding: 4px 0; }
+  .release-body li::before {
+    content: "+"; color: var(--signal); font-family: var(--mono);
+    margin-right: 10px; font-weight: 500;
+  }
+  .release.legacy .release-body li::before { color: var(--mute); }
+  .release-body .outcome {
+    margin-top: 14px;
+    font-family: var(--mono); font-size: 12px; color: var(--text);
+    text-transform: uppercase; letter-spacing: .08em;
+  }
+  .release-body .outcome::before {
+    content: "→ "; color: var(--amber);
+  }
+  .release-toggle {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 1px solid var(--line-2);
+    display: grid; place-items: center;
+    color: var(--text); font-family: var(--mono); font-size: 14px;
+    transition: transform .25s ease, background .2s ease;
+  }
+  .release.open .release-toggle { transform: rotate(45deg); background: rgba(62,224,127,.08); }
+  .release-dates-mobile {
+    display: none; font-family: var(--mono); font-size: 11px;
+    color: var(--mute); margin-top: 6px; letter-spacing: .04em;
+  }
+  @media (max-width: 720px) { .release-dates-mobile { display: block; } }
+  .release-link {
+    display: inline-block; margin-top: 10px;
+    font-family: var(--mono); font-size: 11px; color: var(--signal);
+    text-decoration: none; letter-spacing: .06em;
+    text-transform: uppercase; transition: color .15s ease;
+  }
+  .release-link:hover { color: var(--text-strong); }
+  .release-body-label.shipping { color: var(--amber); }
+  .release-group {
+    border: 1px solid var(--line); border-radius: 16px;
+    background: var(--ink-2); padding: 14px 14px 6px;
+    display: grid; gap: 10px;
+  }
+  .release-group-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px 16px;
+    padding: 4px 8px 10px; border-bottom: 1px dashed var(--line);
+    margin-bottom: 4px;
+  }
+  .release-group-head h3 {
+    margin: 0; font-family: var(--mono); font-size: 11px;
+    color: var(--amber); text-transform: uppercase; letter-spacing: .14em;
+  }
+  .release-group-head span {
+    font-family: var(--mono); font-size: 11px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: .1em;
+  }
+  .release-group-head .release-link { margin-top: 0; }
+  .release-group .release { border-radius: 12px; }
+  .releases-earlier { margin-top: 4px; }
+  .releases-earlier-head {
+    width: 100%; display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; padding: 16px 22px; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 14px;
+    background: var(--ink-2);
+    font-family: var(--mono); font-size: 12px; color: var(--text);
+    text-transform: uppercase; letter-spacing: .1em;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .releases-earlier-head:hover { border-color: var(--line-2); background: var(--ink-3); }
+  .releases-earlier-head .ver { color: var(--mute); font-weight: 500; }
+  .releases-earlier-head .toggle {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 1px solid var(--line-2); display: grid; place-items: center;
+    font-size: 14px; transition: transform .25s ease;
+  }
+  .releases-earlier.open .releases-earlier-head .toggle { transform: rotate(45deg); }
+  .releases-earlier-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height .4s ease;
+    display: grid; gap: 14px;
+  }
+  .releases-earlier.open .releases-earlier-body {
+    max-height: 1200px; padding-top: 14px;
+    display: grid; gap: 14px;
+  }
+
+  /* ============ Case Files ============ */
+  .cases { display: grid; gap: 18px; grid-template-columns: 1fr; }
+  .case {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--ink-2);
+    padding: 28px 30px 32px;
+    position: relative;
+    transition: border-color .25s ease, transform .25s ease;
+  }
+  .case:hover { border-color: var(--line-2); }
+  .case-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 18px; flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .case-tag {
+    font-family: var(--mono); font-size: 11px; color: var(--amber);
+    text-transform: uppercase; letter-spacing: .14em;
+  }
+  .case-meta {
+    font-family: var(--mono); font-size: 11px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: .1em;
+  }
+  .case-title {
+    font-family: var(--serif); font-weight: 350;
+    font-size: clamp(24px, 2.6vw, 34px);
+    line-height: 1.15; letter-spacing: -0.015em;
+    color: var(--text-strong);
+    margin: 0 0 18px;
+    font-variation-settings: "opsz" 96;
+  }
+  .case-title em { color: var(--amber); font-style: italic; }
+  .arc {
+    display: grid; grid-template-columns: 140px 1fr;
+    gap: 16px; padding: 14px 0;
+    border-top: 1px dashed var(--line);
+    font-size: 14.5px; color: var(--text); line-height: 1.6;
+  }
+  @media (max-width: 640px) {
+    .case { padding: 22px 20px 26px; }
+    .arc { grid-template-columns: 1fr; gap: 4px; padding: 12px 0; }
+  }
+  .arc .k {
+    font-family: var(--mono); font-size: 11px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: .12em;
+    padding-top: 4px;
+  }
+  .arc.outcome .k { color: var(--signal); }
+  .arc .v strong { color: var(--text-strong); font-weight: 500; }
+  .case-foot {
+    margin-top: 18px; padding-top: 16px;
+    border-top: 1px solid var(--line);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    font-family: var(--mono); font-size: 11px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: .12em;
+  }
+  .case-foot b { color: var(--text); font-weight: 500; }
+
+  /* Toolkit chips inside case */
+  .chiprow { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    display: inline-flex; align-items: center;
+    padding: 3px 9px; border-radius: 999px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid var(--line-2);
+    color: var(--text); font-family: var(--mono); font-size: 11px;
+    letter-spacing: .04em;
+    transition: background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .chip.is-active, .chip:hover { background: rgba(62,224,127,.1); border-color: rgba(62,224,127,.45); color: var(--signal); }
+  .chip[data-skill] { cursor: pointer; }
+  .case.is-dimmed { opacity: .32; pointer-events: none; }
+  .case-link {
+    display: inline-block; margin-top: 14px;
+    font-family: var(--mono); font-size: 11px; color: var(--signal);
+    text-decoration: none; letter-spacing: .06em;
+    text-transform: uppercase; transition: color .15s ease;
+  }
+  .case-link:hover { color: var(--text-strong); }
+
+  /* ============ Toolkit ============ */
+  .toolkit-head {
+    display: flex; justify-content: space-between; align-items: end; gap: 24px; flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+  .toolkit-head h2 {
+    font-family: var(--serif); font-weight: 350;
+    font-size: clamp(34px, 5vw, 64px);
+    line-height: 1.05; letter-spacing: -0.02em;
+    color: var(--text-strong); margin: 0; max-width: 22ch;
+    font-variation-settings: "opsz" 120;
+  }
+  .toolkit-head h2 em { font-style: italic; color: var(--amber); }
+  .toolkit-head p { color: var(--text); max-width: 36ch; margin: 0; }
+  .toolkit-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+    background: var(--line); border: 1px solid var(--line);
+    border-radius: 14px; overflow: hidden;
+  }
+  @media (max-width: 880px) { .toolkit-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 540px) { .toolkit-grid { grid-template-columns: 1fr; } }
+  .tk {
+    background: var(--ink-2); padding: 22px 22px 24px;
+    cursor: pointer; transition: background .2s ease, box-shadow .2s ease;
+  }
+  .tk:hover { background: rgba(255,255,255,.03); }
+  .tk.is-filter-active {
+    background: rgba(62,224,127,.06);
+    box-shadow: inset 0 0 0 1px rgba(62,224,127,.35);
+  }
+  .tk-filter-hint {
+    font-family: var(--mono); font-size: 11px; color: var(--mute);
+    margin: 0 0 20px; letter-spacing: .06em;
+  }
+  .tk-filter-hint button {
+    background: none; border: none; padding: 0;
+    font: inherit; color: var(--signal); cursor: pointer;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .tk h3 {
+    margin: 0 0 14px;
+    font-family: var(--mono); font-size: 11px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: .14em;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tk h3 b { color: var(--text-strong); font-weight: 500; font-size: 11px; }
+  .tk ul { margin: 0; padding: 0; list-style: none; }
+  .tk li {
+    padding: 6px 0; color: var(--text); font-size: 14.5px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .tk li:last-child { border-bottom: 0; }
+  .tk li::before { content: "·"; color: var(--mute); margin-right: 10px; }
+
+  /* ============ Shipped For ============ */
+  /* 9 brands → 3×3 at every breakpoint (even rows & columns) */
+  .brands {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  @media (max-width: 540px) {
+    .brandcell { min-height: 100px; padding: 14px 8px 12px; }
+    .brandcell-name { font-size: clamp(15px, 4vw, 19px); }
+    .brandcell small { font-size: 7px; letter-spacing: .05em; }
+  }
+  .brandcell {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    align-items: center;
+    justify-items: center;
+    min-height: 112px;
+    padding: 16px 10px 14px;
+    background: var(--ink-2);
+    text-align: center;
+    pointer-events: none;
+  }
+  .brandcell-name {
+    grid-row: 1;
+    align-self: center;
+    color: var(--text-strong);
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(17px, 1.9vw, 22px);
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    max-width: 100%;
+  }
+  .brandcell small {
+    grid-row: 2;
+    align-self: end;
+    display: block;
+    max-width: 100%;
+    font-family: var(--mono);
+    font-size: clamp(8px, 0.72vw, 10px);
+    color: var(--mute);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-weight: 400;
+    line-height: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  @media (max-width: 960px) {
+    .brandcell small { letter-spacing: .06em; }
+  }
+
+  .shipped-foot {
+    margin-top: 18px;
+    font-family: var(--mono); font-size: 11.5px; color: var(--mute);
+    letter-spacing: .04em;
+  }
+  .shipped-foot b { color: var(--text); font-weight: 500; }
+
+  /* ============ Console dock (link to full console) ============ */
+  .console-dock {
+    position: fixed;
+    z-index: 45;
+    right: clamp(16px, 3vw, 28px);
+    bottom: clamp(16px, 3vw, 28px);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: min(420px, calc(100vw - 32px));
+    padding: 12px 16px 12px 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(62,224,127,.28);
+    background: rgba(14,16,20,.94);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    text-decoration: none;
+    letter-spacing: .04em;
+    box-shadow: 0 14px 48px rgba(0,0,0,.5), 0 0 0 1px rgba(62,224,127,.08);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity .28s ease, transform .28s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  .console-dock.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+  .console-dock:hover {
+    border-color: rgba(62,224,127,.5);
+    box-shadow: 0 16px 52px rgba(0,0,0,.55), 0 0 24px rgba(62,224,127,.12);
+    color: var(--text-strong);
+  }
+  .console-dock:focus-visible {
+    outline: 2px solid var(--signal);
+    outline-offset: 3px;
+  }
+  .console-dock-prompt { color: var(--signal); font-weight: 500; }
+  .console-dock-label {
+    color: var(--text-strong); font-weight: 500; font-size: 12px;
+    letter-spacing: .06em; margin-left: auto;
+  }
+  .console-dock-label kbd {
+    border: 1px solid var(--line-2); border-bottom-width: 2px;
+    padding: 0 7px; border-radius: 3px; color: var(--text); background: var(--ink-3);
+    font-family: inherit; font-size: 10px; font-weight: 500; text-transform: lowercase;
+  }
+  .console-dock-word { color: var(--signal); }
+  .console-dock:hover .console-dock-word { color: var(--text-strong); }
+  .console-dock-arrow {
+    color: var(--signal); font-size: 14px; line-height: 1;
+    transition: transform .2s ease;
+  }
+  .console-dock:hover .console-dock-arrow { transform: translateY(2px); }
+  body.has-console-dock { scroll-padding-bottom: 88px; }
+  @media (max-width: 720px) {
+    .console-dock {
+      left: 12px; right: 12px; max-width: none;
+    }
+    body.has-console-dock { scroll-padding-bottom: 72px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .console-dock, .console-dock.is-visible { transition: none; transform: none; }
+    .console-dock:hover .console-dock-arrow { transform: none; }
+  }
+
+  /* ============ Console / Contact ============ */
+  .console-host { position: relative; }
+  .console {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--ink-2);
+    overflow: hidden;
+  }
+  .console-head { position: relative; }
+  .console-head-right { margin-left: auto; }
+  .console-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; border-bottom: 1px solid var(--line);
+    background: var(--ink-3);
+    font-family: var(--mono); font-size: 11px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: .14em;
+  }
+  .console-body {
+    padding: 26px 22px 18px;
+    background: var(--ink-2);
+    font-family: var(--mono); font-size: 14px;
+    line-height: 1.7;
+    min-height: 280px;
+  }
+  .console-line { display: flex; gap: 10px; align-items: flex-start; }
+  .console-line .prompt { color: var(--signal); }
+  .console-line .text { color: var(--text); }
+  .console-line .out { color: var(--text); padding-left: 20px; }
+  .console-line.system .text { color: var(--mute); font-style: italic; }
+  .console form {
+    display: flex; gap: 10px; align-items: center;
+    padding: 14px 22px 22px;
+    border-top: 1px solid var(--line);
+  }
+  .console input {
+    background: transparent; border: 0; outline: 0;
+    color: var(--text-strong); font-family: var(--mono); font-size: 14px;
+    flex: 1; caret-color: var(--signal);
+  }
+  .console input::placeholder { color: var(--mute); }
+  .console form .prompt { color: var(--signal); font-family: var(--mono); }
+
+  .console-actions {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: var(--line); border-top: 1px solid var(--line);
+  }
+  @media (max-width: 640px) { .console-actions { grid-template-columns: repeat(2, 1fr); } }
+  .console-actions a {
+    background: var(--ink-2); padding: 18px;
+    color: var(--text); font-family: var(--mono); font-size: 12px;
+    text-decoration: none; text-align: center;
+    text-transform: uppercase; letter-spacing: .1em;
+    transition: background .15s ease, color .15s ease;
+  }
+  .console-actions a:hover { background: rgba(62,224,127,.08); color: var(--signal); }
+
+  .contact-head {
+    display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(28px, 5vw, 80px);
+    margin-bottom: 28px; align-items: end;
+  }
+  @media (max-width: 880px) { .contact-head { grid-template-columns: 1fr; } }
+  .contact-head h2 {
+    font-family: var(--serif); font-weight: 350;
+    font-size: clamp(40px, 6vw, 80px);
+    line-height: .95; letter-spacing: -0.025em;
+    color: var(--text-strong); margin: 0;
+    font-variation-settings: "opsz" 144;
+  }
+  .contact-head h2 em { font-style: italic; color: var(--signal); }
+  .contact-head p { color: var(--text); max-width: 36ch; margin: 0; font-size: 16px; }
+
+  /* ============ Footer ============ */
+  footer {
+    margin-top: 60px;
+    padding: 32px var(--gutter) 60px;
+    border-top: 1px solid var(--line);
+    font-family: var(--mono); font-size: 11.5px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: .1em;
+  }
+  .footer-inner {
+    max-width: var(--max); margin: 0 auto;
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+  }
+  footer a { color: var(--text); text-decoration: none; }
+  footer a:hover { color: var(--signal); }
+
+  /* ============ Reveal animation ============ */
+  .reveal { opacity: 0; transform: translateY(12px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    .dot { animation: none; }
+    .cursor { animation: none; }
+  }
+
+  /* Education block */
+  .edu-grid {
+    display: grid; grid-template-columns: repeat(2,1fr); gap: 1px;
+    background: var(--line); border: 1px solid var(--line); border-radius: 14px;
+    overflow: hidden;
+    max-width: 760px;
+  }
+  @media (max-width: 640px) { .edu-grid { grid-template-columns: 1fr; } }
+  .edu {
+    background: var(--ink-2); padding: 22px 22px;
+  }
+  .edu small {
+    font-family: var(--mono); font-size: 10.5px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: .14em; display: block; margin-bottom: 8px;
+  }
+  .edu h4 {
+    margin: 0 0 4px; color: var(--text-strong); font-weight: 500; font-size: 15px;
+  }
+  .edu span { color: var(--text); font-size: 13.5px; }
+  .edu span b { color: var(--text-strong); font-weight: 500; }
+
+  /* Easter-egg konami-ish hint */
+  .hint {
+    font-family: var(--mono); font-size: 10.5px; color: var(--mute);
+    text-transform: uppercase; letter-spacing: .12em;
+    margin-top: 14px;
+  }
+  .hint a, .console-link {
+    color: var(--signal); text-decoration: none;
+    transition: color .15s ease;
+  }
+  .hint a:hover, .console-link:hover { color: var(--text-strong); }
+  .hint kbd {
+    border: 1px solid var(--line-2); border-bottom-width: 2px;
+    padding: 1px 6px; border-radius: 4px;
+    color: var(--text); background: var(--ink-3);
+    font-family: var(--mono); font-size: 10.5px;
+  }
+  kbd.kbd-wide { padding: 1px 8px; text-transform: lowercase; }
+</style>
+</head>
+<body>
+
+<div class="spotlight" id="spotlight" aria-hidden="true"></div>
+<div class="halo" id="halo" aria-hidden="true"></div>
+
+<!-- ============ TOP OPERATOR BAR ============ -->
+<header class="opbar">
+  <div class="opbar-inner">
+    <span class="brand"><span class="gr">GR</span> Gonçalo Ramalho</span>
+    <span class="status-pill"><span class="dot"></span> Currently available</span>
+    <nav class="opnav">
+      <a href="#readme">README</a>
+      <a href="#releases">Releases</a>
+      <a href="#cases">Case Files</a>
+      <a href="#toolkit">Toolkit</a>
+      <a href="#console">Console</a>
+    </nav>
+    <span class="clock"><b id="clock">--:--:--</b> · Lisbon</span>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ 00 BOOT ============ -->
+<section class="boot" id="boot">
+  <div class="wrap">
+    <div class="hero" aria-label="Introduction">
+      <div class="section-tag">00 · BOOT</div>
+      <div class="hero-grid">
+      <h1 class="display hero-title reveal">
+        I turn ambiguity<br/>
+        <span class="display-accent"><em>into shipped work.</em><span class="cursor" aria-hidden="true"></span></span>
+      </h1>
+      <div class="hero-copy reveal">
+        <p class="lede">
+          <strong>Product &amp; Innovation Leader.</strong> Fifteen years between design, engineering, and product — from zero-to-one inside a startup studio to enterprise platforms with banks and insurers, and now practical AI-enabled transformation. I shape direction, align stakeholders, and stay close enough to design, engineering, and operations to make the work real.
+        </p>
+        <p class="hint">Press <kbd class="kbd-wide">space</kbd> to open the <a href="#console">console</a>.</p>
+      </div>
+      </div>
+    </div>
+
+    <div class="hero-metrics">
+      <div class="stats reveal" aria-label="Career counters">
+        <div class="stat"><span class="n" data-count="15">0</span><span class="l">Years building products</span></div>
+        <div class="stat"><span class="n"><span data-count="4">0</span></span><span class="l">C-level roles · COO · CTO · CPO · CIO</span></div>
+        <div class="stat"><span class="n"><span data-count="3">0</span></span><span class="l">Zero-to-one platforms</span></div>
+        <div class="stat"><span class="n"><span data-count="6">0</span><sup>+</sup></span><span class="l">Global brands shipped for</span></div>
+      </div>
+
+      <aside class="panel reveal" aria-label="System status">
+        <div class="panel-head">
+          <span class="dots"><i></i><i></i><i></i></span>
+          <span>operator-status · live</span>
+        </div>
+        <div class="status-body">
+          <div class="status-row"><span class="k">Current build</span>
+            <span class="v">Avila Spaces<small>Chief Innovation Officer · since Jan 2026</small></span></div>
+          <div class="status-row"><span class="k">Shipping</span>
+            <span class="v">AI-augmented internal tooling<small>Ops · CRM · onboarding · reporting</small></span></div>
+          <div class="status-row"><span class="k">Uptime</span>
+            <span class="v">15 years in product &amp; innovation</span></div>
+          <div class="status-row"><span class="k">Location</span>
+            <span class="v">Lisbon · 38.7° N<small>Open to remote · selective relocation</small></span></div>
+          <div class="status-row"><span class="k">Availability</span>
+            <span class="v" style="color:var(--signal)">Selective engagements</span></div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 01 README ============ -->
+<section id="readme">
+  <div class="wrap">
+    <div class="section-tag">01 · README</div>
+    <div class="manifesto-grid">
+      <p class="manifesto reveal">
+        I turn <span class="h">ambiguous</span> business opportunities into <span class="b">clear product direction</span>, working systems, and real execution.
+      </p>
+      <div class="anno reveal">
+        <p class="note">Operator's note</p>
+        <p>I started hands-on — <strong>graphic design and front-end</strong> for global brands, then product and operations inside a startup studio, then seven years building Brixel from studio concept to a Swiss property-transaction platform (COO → interim CTO → CPO).</p>
+        <p>Today I lead practical AI-enabled transformation at Avila Spaces. The full role-by-role changelog is in <a href="#releases" style="color:var(--signal)">02 Releases</a>; three flagship stories in <a href="#cases" style="color:var(--signal)">03 Case Files</a>.</p>
+        <p>My contribution runs the same arc: business model → product direction → aligned stakeholders → work that actually ships.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 02 RELEASES ============ -->
+<section id="releases">
+  <div class="wrap">
+    <div class="section-tag">02 · RELEASES</div>
+    <div class="toolkit-head" style="margin-bottom:36px">
+      <h2 class="reveal">Career, as a <em>changelog.</em></h2>
+      <p class="reveal">Click any release to expand its shipped scope. Flagship roles link to <a href="#cases" style="color:var(--signal)">case files</a> below. Newest first.</p>
+    </div>
+
+    <div class="releases">
+
+      <!-- v6.0 -->
+      <article class="release now reveal" id="release-avila" data-open>
+        <div class="release-head">
+          <div class="ver">v6.0 · NOW</div>
+          <div class="title">Chief Innovation Officer · Avila Spaces
+            <small>Practical AI-enabled transformation across the most-awarded coworking brand in Portugal.</small>
+            <span class="release-dates-mobile">Jan 2026 — Present · Lisbon</span></div>
+          <div class="meta"><b>Jan 2026 — Present</b>Lisbon</div>
+          <div class="release-toggle">+</div>
+        </div>
+        <div class="release-body">
+          <div class="release-body-inner">
+            <div class="ver release-body-label shipping" style="font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.12em">In flight</div>
+            <div>
+              <ul>
+                <li>Brought a long-running digital platform initiative over the finish line — aligning external dev, internal needs, and launch priorities.</li>
+                <li>Internal dashboard layer centralising custom tools, ops processes, reporting, and member/lead activity.</li>
+                <li>AI-assisted automations across onboarding, lead conversion, invoicing, internal comms, and operational decisions.</li>
+                <li>Knowledge base that preserves operational memory and reduces dependency on individual employees.</li>
+                <li>CRM & ops systems improvements across member management, invoicing, access control, and internal workflows.</li>
+                <li>Reporting and insight flows to support data-informed management decisions.</li>
+              </ul>
+              <p class="outcome">Platform launch landed · multi-site ops on one internal layer · management reporting without spreadsheet archaeology.</p>
+              <a class="release-link" href="#case-avila">→ Case file</a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- v5.0 -->
+      <article class="release reveal" id="release-gridwork">
+        <div class="release-head">
+          <div class="ver">v5.0</div>
+          <div class="title">Chief Product Officer · Gridwork
+            <small>B2B spin-out of Brixel's transaction model — banks, insurers, and fintech.</small>
+            <span class="release-dates-mobile">Aug 2023 — Dec 2025 · Zurich</span></div>
+          <div class="meta"><b>Aug 2023 — Dec 2025</b>Zurich</div>
+          <div class="release-toggle">+</div>
+        </div>
+        <div class="release-body">
+          <div class="release-body-inner">
+            <div class="ver" style="font-family:var(--mono);font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.12em">Shipped</div>
+            <div>
+              <ul>
+                <li>Adapted Brixel's transaction model into an enterprise product direction for financial institutions, agencies, sellers, and buyers.</li>
+                <li>Translated banking, insurance, and fintech requirements into roadmap decisions, priorities, and process standards.</li>
+                <li>Shipped product views for financial entities to manage properties and for agents to manage sales processes.</li>
+                <li>Defined the product foundation for a broader real-estate transaction model connected to financial &amp; service opportunities.</li>
+                <li>Led the move from a B2C/B2B2C service model to a structured B2B product architecture.</li>
+              </ul>
+              <p class="outcome">Swiss banking &amp; insurance partners on a product surface · partner integrations off the custom-request treadmill.</p>
+              <a class="release-link" href="#case-gridwork">→ Case file</a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <div class="release-group" id="release-brixel">
+        <div class="release-group-head">
+          <h3>Brixel · 2018 — 2025</h3>
+          <span>COO → interim CTO → CPO · Lisbon / Zurich</span>
+          <a class="release-link" href="#case-brixel">→ Case file</a>
+        </div>
+
+      <!-- v4.0 -->
+      <article class="release reveal" id="release-brixel-v4">
+        <div class="release-head">
+          <div class="ver">v4.0</div>
+          <div class="title">Chief Product Officer · Brixel
+            <small>Maturing the Swiss property transaction platform: customer flows, partner integrations, operational scale.</small>
+            <span class="release-dates-mobile">Sep 2022 — Jun 2025 · Zurich</span></div>
+          <div class="meta"><b>Sep 2022 — Jun 2025</b>Zurich</div>
+          <div class="release-toggle">+</div>
+        </div>
+        <div class="release-body">
+          <div class="release-body-inner">
+            <div class="ver" style="font-family:var(--mono);font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.12em">Shipped</div>
+            <div>
+              <ul>
+                <li>Product direction across customer-facing flows, internal service tooling, and partner-facing requirements.</li>
+                <li>Refined the transaction model around sellers, buyers, agencies, service teams, and financial partners.</li>
+                <li>Prioritised work against business impact, operational needs, and technical feasibility.</li>
+                <li>Coordinated product, technology, operations, sales, customer support, and service delivery teams.</li>
+                <li>Adapted product and integration requirements for banking and insurance partners.</li>
+              </ul>
+              <p class="outcome">Sustained transaction volume in CH · banking &amp; insurance partner integrations in production.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- v3.0 -->
+      <article class="release reveal" id="release-brixel-v3">
+        <div class="release-head">
+          <div class="ver">v3.0</div>
+          <div class="title">Interim CTO &amp; Lead PM · Brixel
+            <small>Kept product, technology, and execution aligned during a key growth period after CTO departure.</small>
+            <span class="release-dates-mobile">Jan 2020 — Aug 2022 · Lisbon</span></div>
+          <div class="meta"><b>Jan 2020 — Aug 2022</b>Lisbon</div>
+          <div class="release-toggle">+</div>
+        </div>
+        <div class="release-body">
+          <div class="release-body-inner">
+            <div class="ver" style="font-family:var(--mono);font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.12em">Shipped</div>
+            <div>
+              <ul>
+                <li>Designed and helped build the end-to-end platform across customer-facing flows and internal service tooling.</li>
+                <li>Custom CRM and ops tooling — property onboarding, seller/buyer pipelines, listings, leads, document flows.</li>
+                <li>Enabled operations, customer success, sales, and management with custom tooling instead of off-the-shelf systems.</li>
+                <li>Maintained continuity across product direction, technical execution, and operational needs.</li>
+              </ul>
+              <p class="outcome">Product judgment in the loop with the actual code.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- v2.0 -->
+      <article class="release reveal" id="release-brixel-v2">
+        <div class="release-head">
+          <div class="ver">v2.0</div>
+          <div class="title">COO &amp; Product Owner · Brixel (zero-to-one)
+            <small>Concept stage inside a startup studio → a real-estate transaction platform &amp; service model.</small>
+            <span class="release-dates-mobile">Mar 2018 — Dec 2019 · Lisbon</span></div>
+          <div class="meta"><b>Mar 2018 — Dec 2019</b>Lisbon</div>
+          <div class="release-toggle">+</div>
+        </div>
+        <div class="release-body">
+          <div class="release-body-inner">
+            <div class="ver" style="font-family:var(--mono);font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.12em">Shipped</div>
+            <div>
+              <ul>
+                <li>Prototypes, landing pages, and product experiments to validate concepts, messaging, customer needs, and direction.</li>
+                <li>Identified the property transaction as the core value pool — informed the pivot from agency tools to a seller/buyer platform.</li>
+                <li>Led Brixel's Portugal market entry: operations, hiring, partnerships, pricing, local adaptation.</li>
+                <li>Connected product decisions with day-to-day operations, service delivery, and business model validation.</li>
+              </ul>
+              <p class="outcome">Portugal market live · pivot from agency tools to transaction platform validated.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      </div>
+
+      <!-- v1.0 -->
+      <article class="release legacy reveal">
+        <div class="release-head">
+          <div class="ver">v1.0</div>
+          <div class="title">Wide Ventures · Startup studio
+            <small>COO → PM → Lead Front-end. Testing, building, and launching new venture concepts.</small>
+            <span class="release-dates-mobile">Apr 2015 — Feb 2018 · Lisbon</span></div>
+          <div class="meta"><b>Apr 2015 — Feb 2018</b>Lisbon</div>
+          <div class="release-toggle">+</div>
+        </div>
+        <div class="release-body">
+          <div class="release-body-inner">
+            <div class="ver" style="font-family:var(--mono);font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.12em">Shipped</div>
+            <div>
+              <ul>
+                <li>Operated a studio focused on testing, building, and launching new venture concepts (COO).</li>
+                <li>Led early product work for venture concepts inside the studio (PM).</li>
+                <li>Built early products and prototypes hand-in-hand with design and product (Lead Front-end).</li>
+              </ul>
+              <p class="outcome">The training ground for everything that followed.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <div class="releases-earlier reveal" id="releases-earlier">
+        <button type="button" class="releases-earlier-head" aria-expanded="false" aria-controls="releases-earlier-body">
+          <span><span class="ver">Earlier builds</span> · Spotshot · ACTIVATE</span>
+          <span class="toggle" aria-hidden="true">+</span>
+        </button>
+        <div class="releases-earlier-body" id="releases-earlier-body">
+
+      <!-- v0.5 -->
+      <article class="release legacy reveal">
+        <div class="release-head">
+          <div class="ver">v0.5</div>
+          <div class="title">Co-founder · Spotshot
+            <small>Nightlife discovery app — pick where to go based on real-time music &amp; venue activity.</small></div>
+          <div class="meta"><b>Aug 2014 — Jul 2016</b>Lisbon</div>
+          <div class="release-toggle">+</div>
+        </div>
+        <div class="release-body">
+          <div class="release-body-inner">
+            <div class="ver" style="font-family:var(--mono);font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.12em">Shipped</div>
+            <div>
+              <ul>
+                <li>Public beta with early users and real-world testing.</li>
+                <li>A music-based discovery experience using short real-time snippets from clubs and bars.</li>
+                <li>Worked through venue supply, user adoption, and copyright constraints.</li>
+              </ul>
+              <p class="outcome">A desirable product still needs a clear business model — learned first-hand.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- v0.1 -->
+      <article class="release legacy reveal">
+        <div class="release-head">
+          <div class="ver">v0.1</div>
+          <div class="title">Digital Manager · ACTIVATE Brand Action
+            <small>Hands-on design, development, and interactive production inside a brand activation agency.</small></div>
+          <div class="meta"><b>Jan 2011 — Mar 2015</b>Lisbon</div>
+          <div class="release-toggle">+</div>
+        </div>
+        <div class="release-body">
+          <div class="release-body-inner">
+            <div class="ver" style="font-family:var(--mono);font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.12em">Shipped</div>
+            <div>
+              <ul>
+                <li>Digital experiences for Google, Schweppes, MTV, Nike, VW, Pandora.</li>
+                <li>Websites, Facebook apps, mobile/web apps, digital campaigns, video mapping, interactive event activations.</li>
+                <li>Expanded the agency's digital capability beyond event production into interactive products and campaign platforms.</li>
+              </ul>
+              <p class="outcome">Where the hands learned what the strategy could later ask for.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 CASE FILES ============ -->
+<section id="cases">
+  <div class="wrap">
+    <div class="section-tag">03 · CASE FILES</div>
+    <div class="toolkit-head" style="margin-bottom:36px">
+      <h2 class="reveal">Three operations, <em>same loop.</em></h2>
+      <p class="reveal">Narrative deep-dives — newest first. Shipped detail lives in <a href="#releases" style="color:var(--signal)">02 Releases</a>; click a toolkit room below to highlight which cases used it.</p>
+    </div>
+
+    <div class="cases">
+
+      <article class="case reveal" id="case-avila" data-skills="strategy product operations engineering ai">
+        <div class="case-head">
+          <span class="case-tag">CASE FILE 01 · AVILA SPACES</span>
+          <span class="case-meta">JAN 2026 — NOW · LISBON · CHIEF INNOVATION OFFICER</span>
+        </div>
+        <h3 class="case-title">Make a service business <em>operate like a product company</em> — using AI as the lever, not the headline.</h3>
+        <div class="arc">
+          <div class="k">Ambiguity</div>
+          <div class="v">A multi-site coworking operator with years of platform intent, ops knowledge in people's heads, and tooling that never quite connected.</div>
+        </div>
+        <div class="arc">
+          <div class="k">Clarity</div>
+          <div class="v">Ranked workflows by leverage — leads, onboarding, billing, access, reporting — and separated what needed a product decision from what AI could run quietly behind the scenes.</div>
+        </div>
+        <div class="arc">
+          <div class="k">Execution</div>
+          <div class="v">Stayed in the loop on vendor delivery while building the internal layer myself: one dashboard, targeted automations, and a knowledge base that outlasts any single hire. Full shipped scope in <a href="#release-avila" style="color:var(--signal)">v6.0</a>.</div>
+        </div>
+        <div class="arc outcome">
+          <div class="k">Outcome</div>
+          <div class="v"><strong>Customer platform live across Portugal's most-awarded coworking brand.</strong> Management sees member and lead activity in one place — not in five spreadsheets.</div>
+        </div>
+        <div class="case-foot">
+          <span class="chiprow">
+            <span class="chip" data-skill="strategy">Strategy</span>
+            <span class="chip" data-skill="product">Product</span>
+            <span class="chip" data-skill="operations">Operations</span>
+            <span class="chip" data-skill="engineering">Engineering</span>
+            <span class="chip" data-skill="ai">AI</span>
+          </span>
+          <span><b>In flight</b></span>
+        </div>
+        <a class="case-link" href="#releases">↑ Full release log</a>
+      </article>
+
+      <article class="case reveal" id="case-gridwork" data-skills="strategy product operations engineering">
+        <div class="case-head">
+          <span class="case-tag">CASE FILE 02 · GRIDWORK</span>
+          <span class="case-meta">AUG 2023 — DEC 2025 · ZURICH · CPO</span>
+        </div>
+        <h3 class="case-title">Turn a validated service into a <em>structured B2B product</em> banks and insurers can integrate into.</h3>
+        <div class="arc">
+          <div class="k">Ambiguity</div>
+          <div class="v"><strong>Gridwork is the B2B product line that grew out of Brixel's transaction model</strong> — same domain, new buyer. Enterprise partners wanted APIs and process standards, not the consumer-facing service the team had been optimising for.</div>
+        </div>
+        <div class="arc">
+          <div class="k">Clarity</div>
+          <div class="v">Framed the roadmap around what financial institutions, agencies, and internal ops each needed to see — then made partner requests compete with product surface area instead of one-off builds.</div>
+        </div>
+        <div class="arc">
+          <div class="k">Execution</div>
+          <div class="v">Ran product while Brixel and Gridwork overlapped in calendar — protecting continuity for existing users while opening the enterprise lane. Detail in <a href="#release-gridwork" style="color:var(--signal)">v5.0</a>.</div>
+        </div>
+        <div class="arc outcome">
+          <div class="k">Outcome</div>
+          <div class="v"><strong>Swiss banking and insurance partners on a structured product architecture.</strong> Integrations moved from bespoke projects to repeatable product capabilities.</div>
+        </div>
+        <div class="case-foot">
+          <span class="chiprow">
+            <span class="chip" data-skill="strategy">Strategy</span>
+            <span class="chip" data-skill="product">Product</span>
+            <span class="chip" data-skill="operations">Operations</span>
+            <span class="chip" data-skill="engineering">Engineering</span>
+          </span>
+          <span><b>2 years 5 months</b></span>
+        </div>
+        <a class="case-link" href="#release-gridwork">↑ Full release · v5.0</a>
+      </article>
+
+      <article class="case reveal" id="case-brixel" data-skills="strategy product operations engineering design">
+        <div class="case-head">
+          <span class="case-tag">CASE FILE 03 · BRIXEL</span>
+          <span class="case-meta">MAR 2018 — JUN 2025 · LISBON / ZURICH · COO → CTO → CPO</span>
+        </div>
+        <h3 class="case-title">Take a real-estate <em>idea</em> from a studio whiteboard to a Swiss transaction platform with banking partners.</h3>
+        <div class="arc">
+          <div class="k">Ambiguity</div>
+          <div class="v">An agency-tool sketch in a venture studio — plenty of hypotheses, no proof of where the margin lived.</div>
+        </div>
+        <div class="arc">
+          <div class="k">Clarity</div>
+          <div class="v">Named the <strong>transaction</strong> as the value pool and rebuilt the model around sellers, buyers, agencies, and financial partners — then held that line through a CTO exit and a Switzerland move.</div>
+        </div>
+        <div class="arc">
+          <div class="k">Execution</div>
+          <div class="v">Three chapters in one company: validate and enter Portugal, build the platform as interim CTO, mature the Swiss operation as CPO. Role-by-role detail in <a href="#release-brixel" style="color:var(--signal)">v2.0 – v4.0</a>.</div>
+        </div>
+        <div class="arc outcome">
+          <div class="k">Outcome</div>
+          <div class="v"><strong>Seven years, two countries, sustained transaction volume in Switzerland.</strong> The operating proof that later became Gridwork's enterprise direction.</div>
+        </div>
+        <div class="case-foot">
+          <span class="chiprow">
+            <span class="chip" data-skill="strategy">Strategy</span>
+            <span class="chip" data-skill="product">Product</span>
+            <span class="chip" data-skill="operations">Operations</span>
+            <span class="chip" data-skill="engineering">Engineering</span>
+            <span class="chip" data-skill="design">Design</span>
+          </span>
+          <span><b>7 years 4 months</b> · 3 roles</span>
+        </div>
+        <a class="case-link" href="#release-brixel">↑ Full release log · v2.0 – v4.0</a>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 TOOLKIT ============ -->
+<section id="toolkit">
+  <div class="wrap">
+    <div class="section-tag">04 · TOOLKIT</div>
+    <div class="toolkit-head">
+      <h2 class="reveal">Six rooms in <em>one house.</em></h2>
+      <p class="reveal">The way I read a business pulls from each. The way I ship a thing requires all of them.</p>
+    </div>
+
+    <p class="tk-filter-hint reveal" id="tk-filter-hint" hidden>Filtering case files by <strong id="tk-filter-label"></strong>. <button type="button" id="tk-filter-clear">Show all</button></p>
+
+    <div class="toolkit-grid reveal" id="toolkit-grid">
+      <div class="tk" data-skill="strategy" tabindex="0" role="button" aria-pressed="false">
+        <h3><b>Strategy</b> · 01</h3>
+        <ul>
+          <li>Business model &amp; value-pool mapping</li>
+          <li>Product strategy &amp; positioning</li>
+          <li>Zero-to-one &amp; market entry</li>
+          <li>Pivot &amp; consolidation decisions</li>
+          <li>Stakeholder alignment</li>
+        </ul>
+      </div>
+      <div class="tk" data-skill="product" tabindex="0" role="button" aria-pressed="false">
+        <h3><b>Product</b> · 02</h3>
+        <ul>
+          <li>Product direction &amp; roadmapping</li>
+          <li>Marketplace / B2B2C / B2B architecture</li>
+          <li>Customer journeys &amp; flows</li>
+          <li>Requirements translation</li>
+          <li>Prioritisation across business &amp; tech</li>
+        </ul>
+      </div>
+      <div class="tk" data-skill="operations" tabindex="0" role="button" aria-pressed="false">
+        <h3><b>Operations</b> · 03</h3>
+        <ul>
+          <li>Service-to-product transitions</li>
+          <li>CRM, invoicing, member, access</li>
+          <li>Reporting &amp; insight flows</li>
+          <li>Knowledge bases &amp; documentation</li>
+          <li>Cross-functional team coordination</li>
+        </ul>
+      </div>
+      <div class="tk" data-skill="engineering" tabindex="0" role="button" aria-pressed="false">
+        <h3><b>Engineering</b> · 04</h3>
+        <ul>
+          <li>Technical feasibility &amp; trade-offs</li>
+          <li>Interim CTO experience</li>
+          <li>Front-end roots (Angular era →)</li>
+          <li>Integration architecture (fintech)</li>
+          <li>Working close to the code</li>
+        </ul>
+      </div>
+      <div class="tk" data-skill="design" tabindex="0" role="button" aria-pressed="false">
+        <h3><b>Design</b> · 05</h3>
+        <ul>
+          <li>Graphic &amp; digital design degree</li>
+          <li>Product UX &amp; UI judgment</li>
+          <li>Prototyping &amp; landing-page craft</li>
+          <li>Brand language for product</li>
+          <li>Interactive &amp; activation work</li>
+        </ul>
+      </div>
+      <div class="tk" data-skill="ai" tabindex="0" role="button" aria-pressed="false">
+        <h3><b>AI</b> · 06</h3>
+        <ul>
+          <li>AI-augmented building practice</li>
+          <li>Workflow automation &amp; agents</li>
+          <li>Operational AI integration</li>
+          <li>Combining judgment with implementation</li>
+          <li>Doing more with smaller teams</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 05 SHIPPED FOR ============ -->
+<section id="shipped">
+  <div class="wrap">
+    <div class="section-tag">05 · SHIPPED FOR</div>
+    <div class="toolkit-head" style="margin-bottom:36px">
+      <h2 class="reveal">Shipped for <em>global brands.</em></h2>
+      <p class="reveal">From four years of agency work that taught me how to deliver something visible by Friday — and from the platforms and partners that followed.</p>
+    </div>
+
+    <div class="brands reveal">
+      <div class="brandcell">
+        <span class="brandcell-name">Google</span>
+        <small>Activate · interactive</small>
+      </div>
+      <div class="brandcell">
+        <span class="brandcell-name">Schweppes</span>
+        <small>Activate · campaign</small>
+      </div>
+      <div class="brandcell">
+        <span class="brandcell-name">MTV</span>
+        <small>Activate · event</small>
+      </div>
+      <div class="brandcell">
+        <span class="brandcell-name">Nike</span>
+        <small>Activate · digital</small>
+      </div>
+      <div class="brandcell">
+        <span class="brandcell-name">Volkswagen</span>
+        <small>Activate · interactive</small>
+      </div>
+      <div class="brandcell">
+        <span class="brandcell-name">Pandora</span>
+        <small>Activate · campaign</small>
+      </div>
+      <div class="brandcell">
+        <span class="brandcell-name">Brixel</span>
+        <small>Property platform · Switzerland</small>
+      </div>
+      <div class="brandcell">
+        <span class="brandcell-name">Gridwork</span>
+        <small>B2B · banking &amp; insurance</small>
+      </div>
+      <div class="brandcell">
+        <span class="brandcell-name">Avila Spaces</span>
+        <small>Coworking · AI · Portugal</small>
+      </div>
+    </div>
+
+    <p class="shipped-foot reveal">
+      Later: <b>Swiss banking &amp; insurance partners</b> on those platforms — under NDA, available to discuss in conversation.
+    </p>
+
+    <div class="toolkit-head" style="margin-top:80px; margin-bottom:24px">
+      <h2 class="reveal" style="font-size:clamp(28px,3.6vw,44px)">Education.</h2>
+    </div>
+    <div class="edu-grid reveal">
+      <div class="edu">
+        <small>2017 — 2019</small>
+        <h4>Universidade Europeia</h4>
+        <span>Master's degree · <b>Management &amp; Business Strategy</b></span>
+      </div>
+      <div class="edu">
+        <small>2007 — 2010</small>
+        <h4>ESAD · Caldas da Rainha</h4>
+        <span>Bachelor's · <b>Graphic &amp; Digital Design</b></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 CONSOLE ============ -->
+<section id="console">
+  <div class="wrap">
+    <div class="section-tag">06 · CONSOLE</div>
+
+    <div class="contact-head">
+      <h2 class="reveal">Let's <em>talk shop.</em></h2>
+      <p class="reveal">I'm best for ambiguous mandates, zero-to-one bets, platform transitions, and AI-assisted transformation work. Use the <a href="#console" class="console-link">console</a> below or pick a shortcut.</p>
+    </div>
+
+    <div class="console-host" id="console-host">
+    <div class="console reveal" id="console-el">
+      <div class="console-head">
+        <span><span class="dot" style="display:inline-block;vertical-align:middle;margin-right:8px"></span> ramalho@operator · ~ </span>
+        <span class="console-head-right">console v6.0</span>
+      </div>
+      <div class="console-body" id="console-out">
+        <div class="console-line system"><span class="text">// Pick a shortcut below or enter a command.</span></div>
+        <div class="console-line"><span class="prompt">$</span> <span class="text">whoami</span></div>
+        <div class="console-line"><span class="out">Gonçalo Ramalho — Product &amp; Innovation Leader. Lisbon.</span></div>
+        <div class="console-line"><span class="prompt">$</span> <span class="text">status</span></div>
+        <div class="console-line"><span class="out" style="color:var(--signal)">● open to selective engagements · advisory, fractional, and full-time considered.</span></div>
+      </div>
+      <form id="console-form" autocomplete="off">
+        <span class="prompt">$</span>
+        <input id="console-input" name="cmd" placeholder="email · linkedin · book · cv · github" aria-label="Console input" />
+      </form>
+      <div class="console-actions">
+        <a href="mailto:goncaloramalho88@gmail.com" data-cmd="email">→ Email</a>
+        <a href="https://www.linkedin.com/in/goncalofframalho/" target="_blank" rel="noopener" data-cmd="linkedin">→ LinkedIn</a>
+        <a href="tel:+351910236363" data-cmd="call">→ +351 910 236 363</a>
+        <a href="https://goncalofframalho.com" target="_blank" rel="noopener" data-cmd="site">→ goncalofframalho.com</a>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>© 2026 Gonçalo Ramalho · Lisbon</span>
+    <span><a href="#boot">Back to top ↑</a></span>
+    <span>Last shipped · May 2026</span>
+  </div>
+</footer>
+
+<a href="#console" class="console-dock" id="console-dock" aria-label="Open console — press space">
+  <span class="console-dock-prompt">$</span>
+  <span class="console-dock-label">Press <kbd class="kbd-wide">space</kbd> · <span class="console-dock-word">console</span></span>
+  <span class="console-dock-arrow" aria-hidden="true">↓</span>
+</a>
+
+<script>
+  /* ============ Opbar height → hero min-height ============ */
+  (function () {
+    const bar = document.querySelector('.opbar');
+    if (!bar) return;
+    const set = () => document.documentElement.style.setProperty('--opbar-h', bar.offsetHeight + 'px');
+    set();
+    window.addEventListener('resize', set);
+    if (typeof ResizeObserver !== 'undefined') {
+      new ResizeObserver(set).observe(bar);
+    }
+  })();
+
+  /* ============ Cursor halo (rAF-driven, eased) ============ */
+  (function () {
+    const halo = document.getElementById('halo');
+    if (!halo || matchMedia('(hover: none)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    let mx = window.innerWidth / 2, my = window.innerHeight / 2;
+    let cx = mx, cy = my;
+    let firstMove = true;
+    window.addEventListener('mousemove', (e) => {
+      mx = e.clientX; my = e.clientY;
+      if (firstMove) { cx = mx; cy = my; document.body.classList.add('has-halo'); firstMove = false; }
+    });
+    window.addEventListener('mouseleave', () => document.body.classList.remove('has-halo'));
+    window.addEventListener('mouseenter', () => document.body.classList.add('has-halo'));
+    const root = document.documentElement;
+    function tick() {
+      cx += (mx - cx) * 0.14;
+      cy += (my - cy) * 0.14;
+      halo.style.transform = `translate(${cx}px, ${cy}px) translate(-50%, -50%)`;
+      root.style.setProperty('--mx', cx + 'px');
+      root.style.setProperty('--my', cy + 'px');
+      requestAnimationFrame(tick);
+    }
+    tick();
+    window.addEventListener('touchstart', () => { document.body.classList.remove('has-halo'); halo.style.display = 'none'; }, { once: true, passive: true });
+  })();
+
+  /* ============ Live Lisbon clock ============ */
+  const clock = document.getElementById('clock');
+  function tick() {
+    const d = new Date();
+    const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    clock.textContent = fmt.format(d);
+  }
+  tick(); setInterval(tick, 1000);
+
+  /* ============ Reveal-on-scroll ============ */
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } });
+  }, { rootMargin: '0px 0px -60px 0px', threshold: 0.05 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  /* ============ Stat counters ============ */
+  function animateCount(node) {
+    const target = parseInt(node.dataset.count, 10);
+    const dur = 1100; const t0 = performance.now();
+    function step(t) {
+      const p = Math.min(1, (t - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      node.textContent = Math.round(target * eased);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  const countIO = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { animateCount(e.target); countIO.unobserve(e.target); } });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('[data-count]').forEach(n => countIO.observe(n));
+
+  /* ============ Releases: expand/collapse ============ */
+  document.querySelectorAll('.release').forEach(r => {
+    const head = r.querySelector('.release-head');
+    head.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      r.classList.toggle('open');
+    });
+    if (r.hasAttribute('data-open')) r.classList.add('open');
+  });
+
+  /* ============ Earlier builds accordion ============ */
+  const earlier = document.getElementById('releases-earlier');
+  if (earlier) {
+    const btn = earlier.querySelector('.releases-earlier-head');
+    btn.addEventListener('click', () => {
+      const open = earlier.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  }
+
+  /* ============ Toolkit / chip filter on case files ============ */
+  (function () {
+    const cases = document.querySelectorAll('.case[data-skills]');
+    const tks = document.querySelectorAll('.tk[data-skill]');
+    const chips = document.querySelectorAll('.chip[data-skill]');
+    const hint = document.getElementById('tk-filter-hint');
+    const label = document.getElementById('tk-filter-label');
+    const clearBtn = document.getElementById('tk-filter-clear');
+    if (!cases.length) return;
+
+    const skillLabels = { strategy: 'Strategy', product: 'Product', operations: 'Operations', engineering: 'Engineering', design: 'Design', ai: 'AI' };
+    let active = null;
+
+    function applyFilter(skill) {
+      active = skill;
+      cases.forEach(c => {
+        const skills = (c.dataset.skills || '').split(/\s+/);
+        c.classList.toggle('is-dimmed', skill && !skills.includes(skill));
+      });
+      tks.forEach(t => {
+        const on = t.dataset.skill === skill;
+        t.classList.toggle('is-filter-active', on);
+        t.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+      chips.forEach(ch => ch.classList.toggle('is-active', ch.dataset.skill === skill));
+      if (hint && label) {
+        if (skill) {
+          label.textContent = skillLabels[skill] || skill;
+          hint.hidden = false;
+        } else {
+          hint.hidden = true;
+        }
+      }
+    }
+
+    function onPick(skill) {
+      applyFilter(active === skill ? null : skill);
+    }
+
+    tks.forEach(t => {
+      t.addEventListener('click', () => onPick(t.dataset.skill));
+      t.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(t.dataset.skill); }
+      });
+    });
+    chips.forEach(ch => {
+      ch.addEventListener('click', (e) => {
+        e.stopPropagation();
+        onPick(ch.dataset.skill);
+        document.getElementById('toolkit')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+    if (clearBtn) clearBtn.addEventListener('click', () => applyFilter(null));
+  })();
+
+  /* ============ Console ============ */
+  const out = document.getElementById('console-out');
+  const form = document.getElementById('console-form');
+  const input = document.getElementById('console-input');
+
+  function print(text, cls) {
+    const line = document.createElement('div');
+    line.className = 'console-line' + (cls ? ' ' + cls : '');
+    line.innerHTML = '<span class="out">' + text + '</span>';
+    out.appendChild(line);
+    out.scrollTop = out.scrollHeight;
+  }
+  function echo(cmd) {
+    const line = document.createElement('div');
+    line.className = 'console-line';
+    line.innerHTML = '<span class="prompt">$</span> <span class="text">' + cmd + '</span>';
+    out.appendChild(line);
+  }
+
+  const commands = {
+    help() {
+      print('available · <span style="color:var(--signal)">help · whoami · status · email · linkedin · call · cv · github · site · skills · stack · brands · clear · 42</span>');
+    },
+    whoami() { print('Gonçalo Ramalho — Product &amp; Innovation Leader. I turn ambiguity into shipped work. Lisbon.'); },
+    status() { print('<span style="color:var(--signal)">● open to selective engagements · advisory, fractional, and full-time considered.</span>'); },
+    email() { print('opening mail client → <a style="color:var(--signal)" href="mailto:goncaloramalho88@gmail.com">goncaloramalho88@gmail.com</a>'); window.location.href = 'mailto:goncaloramalho88@gmail.com'; },
+    linkedin() { print('opening → <a style="color:var(--signal)" target="_blank" href="https://www.linkedin.com/in/goncalofframalho/">linkedin.com/in/goncalofframalho</a>'); window.open('https://www.linkedin.com/in/goncalofframalho/', '_blank'); },
+    call() { print('dialing → <a style="color:var(--signal)" href="tel:+351910236363">+351 910 236 363</a>'); },
+    site() { print('opening → <a style="color:var(--signal)" target="_blank" href="https://goncalofframalho.com">goncalofframalho.com</a>'); window.open('https://goncalofframalho.com', '_blank'); },
+    cv() { print('the site you are reading <em>is</em> the cv. for a printable version, email me.'); },
+    book() { print('to book a call, email <a style="color:var(--signal)" href="mailto:goncaloramalho88@gmail.com">goncaloramalho88@gmail.com</a> with a 1-line context and your timezone.'); },
+    github() { print('roots in front-end (Angular era), now AI-augmented building. private repos mostly. happy to walk through anything in conversation.'); },
+    skills() { print('strategy · product · operations · engineering · design · ai — see <a style="color:var(--signal)" href="#toolkit">04 toolkit</a>'); },
+    stack() { print('hands-on: react · next · node · tailwind · figma · supabase · langchain · openai · claude · zapier · n8n · airtable · notion · linear · whatever the job needs.'); },
+    brands() { print('Activate: Google · Schweppes · MTV · Nike · VW · Pandora. Platforms: Brixel · Gridwork · Avila Spaces. Plus Swiss banking &amp; insurance partners under NDA.'); },
+    clear() { out.innerHTML = ''; },
+    '42'() { print('the answer · also: a good roadmap fits on one page.'); }
+  };
+
+  function run(rawCmd) {
+    const cmd = (rawCmd || '').trim().toLowerCase();
+    if (!cmd) return;
+    echo(cmd);
+    if (commands[cmd]) commands[cmd]();
+    else print('command not found', 'system');
+  }
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    run(input.value);
+    input.value = '';
+  });
+
+  document.querySelectorAll('.console-actions a[data-cmd]').forEach(a => {
+    a.addEventListener('click', (e) => {
+      // also echo to console
+      const cmd = a.dataset.cmd;
+      echo(cmd);
+      print('opening → <a style="color:var(--signal)" href="' + a.getAttribute('href') + '">' + a.textContent.replace(/^→\s*/, '') + '</a>');
+    });
+  });
+
+  function openConsoleFromShortcut() {
+    document.getElementById('console')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => input?.focus({ preventScroll: true }), 400);
+  }
+
+  function isSpaceConsoleShortcut(e) {
+    if (e.key !== ' ' && e.code !== 'Space') return false;
+    if (e.repeat) return false;
+    const el = document.activeElement;
+    if (!el) return true;
+    const tag = el.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return false;
+    if (el.isContentEditable) return false;
+    if (el.closest('button, a[href], summary, [role="button"], [role="link"]')) return false;
+    return true;
+  }
+
+  /* keyboard shortcut: space focuses console input */
+  document.addEventListener('keydown', (e) => {
+    if (!isSpaceConsoleShortcut(e)) return;
+    e.preventDefault();
+    openConsoleFromShortcut();
+  });
+
+  /* ============ Console dock — show link when console section is off-screen ============ */
+  (function () {
+    const dock = document.getElementById('console-dock');
+    const section = document.getElementById('console');
+    if (!dock || !section) return;
+
+    const io = new IntersectionObserver(([entry]) => {
+      const show = !entry.isIntersecting;
+      dock.classList.toggle('is-visible', show);
+      document.body.classList.toggle('has-console-dock', show);
+    }, { threshold: 0.08, rootMargin: '0px 0px -48px 0px' });
+    io.observe(section);
+
+    dock.addEventListener('click', () => {
+      setTimeout(() => input?.focus({ preventScroll: true }), 500);
+    });
+  })();
+</script>
+
+</body>
+</html>
