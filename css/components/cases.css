@@ -66,13 +66,6 @@
   letter-spacing: .04em;
   transition: background .15s ease, border-color .15s ease, color .15s ease;
 }
-.chip.is-active, .chip:hover {
-  background: color-mix(in srgb, var(--signal) 10%, transparent);
-  border-color: color-mix(in srgb, var(--signal) 45%, transparent);
-  color: var(--signal);
-}
-.chip[data-skill] { cursor: pointer; }
-.case.is-dimmed { opacity: .32; pointer-events: none; }
 .case-link {
   display: inline-block; margin-top: 14px;
   font-family: var(--mono); font-size: 11px; color: var(--signal);

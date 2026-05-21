@@ -88,61 +88,6 @@ if (earlier) {
   });
 }
 
-/* ============ Toolkit / chip filter on case files ============ */
-(function () {
-  const cases = document.querySelectorAll('.case[data-skills]');
-  const tks = document.querySelectorAll('.tk[data-skill]');
-  const chips = document.querySelectorAll('.chip[data-skill]');
-  const hint = document.getElementById('tk-filter-hint');
-  const label = document.getElementById('tk-filter-label');
-  const clearBtn = document.getElementById('tk-filter-clear');
-  if (!cases.length) return;
-
-  const skillLabels = { strategy: 'Strategy', product: 'Product', operations: 'Operations', engineering: 'Engineering', design: 'Design', ai: 'AI' };
-  let active = null;
-
-  function applyFilter(skill) {
-    active = skill;
-    cases.forEach(c => {
-      const skills = (c.dataset.skills || '').split(/\s+/);
-      c.classList.toggle('is-dimmed', skill && !skills.includes(skill));
-    });
-    tks.forEach(t => {
-      const on = t.dataset.skill === skill;
-      t.classList.toggle('is-filter-active', on);
-      t.setAttribute('aria-pressed', on ? 'true' : 'false');
-    });
-    chips.forEach(ch => ch.classList.toggle('is-active', ch.dataset.skill === skill));
-    if (hint && label) {
-      if (skill) {
-        label.textContent = skillLabels[skill] || skill;
-        hint.hidden = false;
-      } else {
-        hint.hidden = true;
-      }
-    }
-  }
-
-  function onPick(skill) {
-    applyFilter(active === skill ? null : skill);
-  }
-
-  tks.forEach(t => {
-    t.addEventListener('click', () => onPick(t.dataset.skill));
-    t.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(t.dataset.skill); }
-    });
-  });
-  chips.forEach(ch => {
-    ch.addEventListener('click', (e) => {
-      e.stopPropagation();
-      onPick(ch.dataset.skill);
-      document.getElementById('toolkit')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  });
-  if (clearBtn) clearBtn.addEventListener('click', () => applyFilter(null));
-})();
-
 /* ============ Console ============ */
 const out = document.getElementById('console-out');
 const form = document.getElementById('console-form');
