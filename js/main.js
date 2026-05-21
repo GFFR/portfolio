@@ -109,13 +109,12 @@ function echo(cmd) {
 
 const commands = {
   help() {
-    print('available · <span class="console-accent">help · whoami · status · email · linkedin · call · cv · github · site · skills · stack · brands · clear · 42</span>');
+    print('available · <span class="console-accent">help · whoami · status · email · linkedin · cv · github · site · skills · stack · brands · clear · 42</span>');
   },
   whoami() { print('Gonçalo Ramalho — Product &amp; Innovation Leader. I turn ambiguity into shipped work. Lisbon.'); },
   status() { print('<span class="console-accent">● open to selective engagements · advisory, fractional, and full-time considered.</span>'); },
   email() { print('opening mail client → <a class="console-accent" href="mailto:goncaloramalho88@gmail.com">goncaloramalho88@gmail.com</a>'); window.location.href = 'mailto:goncaloramalho88@gmail.com'; },
   linkedin() { print('opening → <a class="console-accent" target="_blank" rel="noopener" href="https://www.linkedin.com/in/goncalofframalho/">linkedin.com/in/goncalofframalho</a>'); window.open('https://www.linkedin.com/in/goncalofframalho/', '_blank'); },
-  call() { print('dialing → <a class="console-accent" href="tel:+351910236363">+351 910 236 363</a>'); },
   site() { print('opening → <a class="console-accent" target="_blank" rel="noopener" href="https://goncalofframalho.com">goncalofframalho.com</a>'); window.open('https://goncalofframalho.com', '_blank'); },
   cv() { print('the site you are reading <em>is</em> the cv. for a printable version, email me.'); },
   book() { print('to book a call, email <a class="console-accent" href="mailto:goncaloramalho88@gmail.com">goncaloramalho88@gmail.com</a> with a 1-line context and your timezone.'); },
