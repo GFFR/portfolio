@@ -1,0 +1,39 @@
+.spotlight {
+  position: fixed; inset: 0;
+  z-index: 0; pointer-events: none;
+  background-image: var(--spotlight-pattern);
+  background-size: 52px 52px;
+  background-repeat: repeat;
+  -webkit-mask-image: radial-gradient(circle 300px at var(--mx) var(--my),
+    rgba(0,0,0,1) 0%, rgba(0,0,0,.95) 25%, rgba(0,0,0,.55) 55%, rgba(0,0,0,.15) 80%, rgba(0,0,0,0) 100%);
+          mask-image: radial-gradient(circle 300px at var(--mx) var(--my),
+    rgba(0,0,0,1) 0%, rgba(0,0,0,.95) 25%, rgba(0,0,0,.55) 55%, rgba(0,0,0,.15) 80%, rgba(0,0,0,0) 100%);
+  opacity: 0;
+  transition: opacity .4s ease;
+  will-change: mask-image;
+}
+body.has-halo .spotlight { opacity: 1; }
+
+.halo {
+  position: fixed; top: 0; left: 0;
+  width: 520px; height: 520px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at center,
+      rgba(232,168,92,.08) 0%,
+      rgba(232,168,92,.035) 32%,
+      color-mix(in srgb, var(--signal) 1.2%, transparent) 60%,
+      transparent 75%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  mix-blend-mode: var(--halo-blend);
+  opacity: 0;
+  transition: opacity .35s ease;
+  will-change: transform;
+  filter: blur(2px);
+}
+body.has-halo .halo { opacity: var(--halo-opacity); }
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .halo, .spotlight { display: none; }
+}

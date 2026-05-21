@@ -1,0 +1,20 @@
+/* PRODUCT CONSOLE — shared layout & accents */
+:root {
+  --mx: 50vw;
+  --my: 50vh;
+  --max: 1240px;
+  --gutter: clamp(20px, 4vw, 56px);
+  --opbar-h: 52px;
+  --serif: "Fraunces", "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --amber: #E8A85C;
+  --warn: #FF7A59;
+  --dot-close: #FF6155;
+  --dot-minimize: #FFBD2E;
+  color-scheme: light dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}

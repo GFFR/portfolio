@@ -1,0 +1,10 @@
+.text-signal { color: var(--signal); }
+a.text-signal {
+  text-decoration: none;
+  transition: color .15s ease;
+}
+a.text-signal:hover { color: var(--text-strong); }
+.console-accent { color: var(--signal); }
+.console-accent:hover { color: var(--text-strong); }
+a.console-accent { text-decoration: none; }
+a.console-accent:hover { text-decoration: underline; text-underline-offset: 3px; }

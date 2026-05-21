@@ -1,0 +1,31 @@
+.manifesto {
+  font-family: var(--serif);
+  font-weight: 350;
+  font-size: clamp(26px, 3.4vw, 44px);
+  line-height: 1.22;
+  letter-spacing: -0.015em;
+  color: var(--text-strong);
+  max-width: 22ch;
+}
+.manifesto-grid {
+  display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(28px, 5vw, 80px);
+  align-items: start;
+}
+@media (max-width: 960px) { .manifesto-grid { grid-template-columns: 1fr; } }
+.manifesto .h { color: var(--amber); font-style: italic; }
+.manifesto .b { color: var(--signal); font-style: italic; }
+.anno {
+  border-left: 1px solid var(--line-2);
+  padding: 0 0 0 22px;
+  margin-top: 8px;
+}
+.anno p {
+  margin: 0 0 18px; color: var(--text);
+  font-size: 15px; line-height: 1.65;
+}
+.anno p strong { color: var(--text-strong); font-weight: 500; }
+.anno .note {
+  font-family: var(--mono); font-size: 11px; color: var(--mute);
+  text-transform: uppercase; letter-spacing: .1em;
+  margin-bottom: 6px;
+}

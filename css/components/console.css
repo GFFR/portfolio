@@ -1,0 +1,79 @@
+.console-host { position: relative; }
+.console {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--ink-2);
+  overflow: hidden;
+}
+.console-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--line);
+  background: var(--ink-3);
+  font-family: var(--mono); font-size: 11px; color: var(--mute);
+  text-transform: uppercase; letter-spacing: .14em;
+  position: relative;
+}
+.console-head-right { margin-left: auto; }
+.console-head .dot {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+  animation: none;
+  box-shadow: none;
+}
+.console-body {
+  padding: 26px 22px 18px;
+  background: var(--ink-2);
+  font-family: var(--mono); font-size: 14px;
+  line-height: 1.7;
+  min-height: 280px;
+}
+.console-line { display: flex; gap: 10px; align-items: flex-start; }
+.console-line .prompt { color: var(--signal); }
+.console-line .text { color: var(--text); }
+.console-line .out { color: var(--text); padding-left: 20px; }
+.console-line.system .text { color: var(--mute); font-style: italic; }
+.console form {
+  display: flex; gap: 10px; align-items: center;
+  padding: 14px 22px 22px;
+  border-top: 1px solid var(--line);
+}
+.console input {
+  background: transparent; border: 0; outline: 0;
+  color: var(--text-strong); font-family: var(--mono); font-size: 14px;
+  flex: 1; caret-color: var(--signal);
+}
+.console input::placeholder { color: var(--mute); }
+.console form .prompt { color: var(--signal); font-family: var(--mono); }
+
+.console-actions {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+  background: var(--line); border-top: 1px solid var(--line);
+}
+@media (max-width: 640px) { .console-actions { grid-template-columns: repeat(2, 1fr); } }
+.console-actions a {
+  background: var(--ink-2); padding: 18px;
+  color: var(--text); font-family: var(--mono); font-size: 12px;
+  text-decoration: none; text-align: center;
+  text-transform: uppercase; letter-spacing: .1em;
+  transition: background .15s ease, color .15s ease;
+}
+.console-actions a:hover {
+  background: color-mix(in srgb, var(--signal) 8%, transparent);
+  color: var(--signal);
+}
+
+.contact-head {
+  display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(28px, 5vw, 80px);
+  margin-bottom: 28px; align-items: end;
+}
+@media (max-width: 880px) { .contact-head { grid-template-columns: 1fr; } }
+.contact-head h2 {
+  font-family: var(--serif); font-weight: 350;
+  font-size: clamp(40px, 6vw, 80px);
+  line-height: .95; letter-spacing: -0.025em;
+  color: var(--text-strong); margin: 0;
+  font-variation-settings: "opsz" 144;
+}
+.contact-head h2 em { font-style: italic; color: var(--signal); }
+.contact-head p { color: var(--text); max-width: 36ch; margin: 0; font-size: 16px; }
