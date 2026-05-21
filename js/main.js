@@ -175,7 +175,7 @@ const commands = {
   cv() { print('the site you are reading <em>is</em> the cv. for a printable version, email me.'); },
   book() { print('to book a call, email <a class="console-accent" href="mailto:goncaloramalho88@gmail.com">goncaloramalho88@gmail.com</a> with a 1-line context and your timezone.'); },
   github() { print('roots in front-end (Angular era), now AI-augmented building. private repos mostly. happy to walk through anything in conversation.'); },
-  skills() { print('strategy · product · operations · engineering · design · ai — see <a class="console-accent" href="#toolkit">04 toolkit</a>'); },
+  skills() { print('strategy · product · operations · engineering · design · ai — see <a class="console-accent" href="#toolkit">04 capabilities</a>'); },
   stack() { print('hands-on: react · next · node · tailwind · figma · supabase · langchain · openai · claude · zapier · n8n · airtable · notion · linear · whatever the job needs.'); },
   brands() { print('Activate: Google · Schweppes · MTV · Nike · VW · Pandora. Platforms: Brixel · Gridwork · Avila Spaces. Plus Swiss banking &amp; insurance partners under NDA.'); },
   clear() { out.innerHTML = ''; },
