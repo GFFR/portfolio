@@ -1,3 +1,6 @@
+/* Hide print CV chrome on screen (do not rely on @media not print or print.css load order) */
+.print-only { display: none !important; }
+
 .text-signal { color: var(--signal); }
 a.text-signal {
   text-decoration: none;

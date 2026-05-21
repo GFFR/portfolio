@@ -1,9 +1,5 @@
 /* Print CV — always light mode, full expanded content */
 
-@media not print {
-  .print-only { display: none !important; }
-}
-
 @media print {
   .screen-only { display: none !important; }
 
@@ -292,6 +288,10 @@
   }
 
   /* Print contact strip */
+  .print-only[hidden] {
+    display: block !important;
+  }
+
   .print-contact {
     display: block !important;
     margin: 0 0 20px;
