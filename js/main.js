@@ -141,14 +141,6 @@ form.addEventListener('submit', (e) => {
   input.value = '';
 });
 
-document.querySelectorAll('.console-actions a[data-cmd]').forEach(a => {
-  a.addEventListener('click', () => {
-    const cmd = a.dataset.cmd;
-    echo(cmd);
-    print('opening → <a class="console-accent" href="' + a.getAttribute('href') + '">' + a.textContent.replace(/^→\s*/, '') + '</a>');
-  });
-});
-
 function openConsoleFromShortcut() {
   document.getElementById('console')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   setTimeout(() => input?.focus({ preventScroll: true }), 400);

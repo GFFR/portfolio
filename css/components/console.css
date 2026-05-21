@@ -46,23 +46,6 @@
 .console input::placeholder { color: var(--mute); }
 .console form .prompt { color: var(--signal); font-family: var(--mono); }
 
-.console-actions {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
-  background: var(--line); border-top: 1px solid var(--line);
-}
-@media (max-width: 640px) { .console-actions { grid-template-columns: repeat(2, 1fr); } }
-.console-actions a {
-  background: var(--ink-2); padding: 18px;
-  color: var(--text); font-family: var(--mono); font-size: 12px;
-  text-decoration: none; text-align: center;
-  text-transform: uppercase; letter-spacing: .1em;
-  transition: background .15s ease, color .15s ease;
-}
-.console-actions a:hover {
-  background: color-mix(in srgb, var(--signal) 8%, transparent);
-  color: var(--signal);
-}
-
 .contact-head {
   display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(28px, 5vw, 80px);
   margin-bottom: 28px; align-items: end;
