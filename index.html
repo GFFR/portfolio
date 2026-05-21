@@ -21,7 +21,7 @@
 <!-- ============ TOP STATUS BAR ============ -->
 <header class="opbar">
   <div class="opbar-inner">
-    <span class="brand"><span class="gram">gram</span> Gonçalo Ramalho</span>
+    <span class="brand">Gonçalo Ramalho</span>
     <span class="status-pill"><span class="dot"></span> Currently available</span>
     <nav class="opnav">
       <a href="#readme">README</a>
@@ -54,7 +54,7 @@
         <p class="lede">
           <strong>Product &amp; Innovation Leader.</strong> Fifteen years between design, engineering, and product — from zero-to-one inside a startup studio to enterprise platforms with banks and insurers, and now practical AI-enabled transformation. I shape direction, align stakeholders, and stay close enough to design, engineering, and operations to make the work real.
         </p>
-        <p class="hint">Press <kbd class="kbd-wide">space</kbd> to open the <a href="#console">console</a>.</p>
+        <p class="hint screen-only">Press <kbd class="kbd-wide">space</kbd> to open the <a href="#console">console</a>.</p>
       </div>
       </div>
     </div>
@@ -113,7 +113,7 @@
     <div class="section-tag">02 · RELEASES</div>
     <div class="toolkit-head toolkit-head--loose">
       <h2 class="reveal">Career, as a <em>changelog.</em></h2>
-      <p class="reveal">Click any release to expand its shipped scope. Flagship roles link to <a href="#cases" class="text-signal">case files</a> below. Newest first.</p>
+      <p class="reveal screen-only">Click any release to expand its shipped scope. Flagship roles link to <a href="#cases" class="text-signal">case files</a> below. Newest first.</p>
     </div>
 
     <div class="releases">
@@ -621,8 +621,14 @@
 
     <div class="contact-head">
       <h2 class="reveal">Contact, <em>as a console.</em></h2>
-      <p class="reveal">I could have ended with a mailto — I shipped a working console instead. Try it out below.</p>
+      <p class="reveal screen-only">I could have ended with a contact form but I shipped a working console instead. Try it out below.</p>
     </div>
+
+    <p class="print-contact print-only">
+      <a href="mailto:goncaloramalho88@gmail.com">goncaloramalho88@gmail.com</a>
+      · <a href="https://www.linkedin.com/in/goncalofframalho/">linkedin.com/in/goncalofframalho</a>
+      · <a href="https://goncalofframalho.com">goncalofframalho.com</a>
+    </p>
 
     <div class="console-host" id="console-host">
     <div class="console reveal" id="console-el">
@@ -637,9 +643,38 @@
         <div class="console-line"><span class="prompt">$</span> <span class="text">status</span></div>
         <div class="console-line"><span class="out console-accent">● open to selective engagements · advisory, fractional, and full-time considered.</span></div>
       </div>
-      <form id="console-form" autocomplete="off">
-        <span class="prompt">$</span>
-        <input id="console-input" name="cmd" placeholder="email · linkedin · book · cv · github" aria-label="Console input" />
+      <form id="console-form" class="console-form" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <div class="console-input-wrap">
+          <div class="console-float" id="console-float" aria-live="polite">
+            <ul id="console-suggest" class="console-suggest" role="listbox" hidden></ul>
+            <p id="console-unknown" class="console-unknown" role="status" hidden></p>
+          </div>
+          <div class="console-line console-input-row" id="console-input-row">
+            <span class="prompt" aria-hidden="true">$</span>
+            <span class="console-input-field-wrap">
+            <span class="console-input-measure" id="console-input-measure" aria-hidden="true"></span>
+            <input
+              id="console-input"
+              class="console-input-field"
+              name="console-command"
+              type="text"
+              aria-label="Console command"
+              aria-controls="console-suggest"
+              aria-expanded="false"
+              autocomplete="off"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              data-lpignore="true"
+              data-1p-ignore
+              data-form-type="other"
+              aria-autocomplete="list"
+              readonly
+            />
+            <span class="cursor console-cursor" id="console-cursor" aria-hidden="true"></span>
+            </span>
+          </div>
+        </div>
       </form>
     </div>
     </div>

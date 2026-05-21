@@ -88,10 +88,34 @@ if (earlier) {
   });
 }
 
+/* ============ Print: expand content & finalize counters ============ */
+function prepareForPrint() {
+  document.querySelectorAll('[data-count]').forEach((n) => {
+    n.textContent = n.getAttribute('data-count');
+  });
+  document.querySelectorAll('.release').forEach((r) => r.classList.add('open'));
+  if (earlier) {
+    earlier.classList.add('open');
+    const earlierBtn = earlier.querySelector('.releases-earlier-head');
+    if (earlierBtn) earlierBtn.setAttribute('aria-expanded', 'true');
+  }
+  document.querySelectorAll('.reveal').forEach((el) => el.classList.add('is-in'));
+}
+window.addEventListener('beforeprint', prepareForPrint);
+if (window.matchMedia) {
+  window.matchMedia('print').addEventListener('change', (e) => {
+    if (e.matches) prepareForPrint();
+  });
+}
+
 /* ============ Console ============ */
 const out = document.getElementById('console-out');
 const form = document.getElementById('console-form');
 const input = document.getElementById('console-input');
+const inputRow = document.getElementById('console-input-row');
+const inputMeasure = document.getElementById('console-input-measure');
+const suggestEl = document.getElementById('console-suggest');
+const unknownEl = document.getElementById('console-unknown');
 
 function print(text, cls) {
   const line = document.createElement('div');
@@ -109,14 +133,17 @@ function echo(cmd) {
 
 const commands = {
   help() {
-    print('available · <span class="console-accent">help · whoami · status · email · linkedin · cv · github · site · skills · stack · brands · clear · 42</span>');
+    print('available · <span class="console-accent">help · whoami · status · email · linkedin · cv · github · site · skills · stack · brands · book · clear · 42</span>');
   },
   whoami() { print('Gonçalo Ramalho — Product &amp; Innovation Leader. I turn ambiguity into shipped work. Lisbon.'); },
   status() { print('<span class="console-accent">● open to selective engagements · advisory, fractional, and full-time considered.</span>'); },
   email() { print('opening mail client → <a class="console-accent" href="mailto:goncaloramalho88@gmail.com">goncaloramalho88@gmail.com</a>'); window.location.href = 'mailto:goncaloramalho88@gmail.com'; },
   linkedin() { print('opening → <a class="console-accent" target="_blank" rel="noopener" href="https://www.linkedin.com/in/goncalofframalho/">linkedin.com/in/goncalofframalho</a>'); window.open('https://www.linkedin.com/in/goncalofframalho/', '_blank'); },
   site() { print('opening → <a class="console-accent" target="_blank" rel="noopener" href="https://goncalofframalho.com">goncalofframalho.com</a>'); window.open('https://goncalofframalho.com', '_blank'); },
-  cv() { print('the site you are reading <em>is</em> the cv. for a printable version, email me.'); },
+  cv() {
+    print('this site prints as a CV — <span class="console-accent">File → Print</span> (or <kbd>Ctrl+P</kbd> / <kbd>⌘P</kbd>). Light mode, full changelog.');
+    setTimeout(function () { window.print(); }, 400);
+  },
   book() { print('to book a call, email <a class="console-accent" href="mailto:goncaloramalho88@gmail.com">goncaloramalho88@gmail.com</a> with a 1-line context and your timezone.'); },
   github() { print('roots in front-end (Angular era), now AI-augmented building. private repos mostly. happy to walk through anything in conversation.'); },
   skills() { print('strategy · product · operations · engineering · design · ai — see <a class="console-accent" href="#toolkit">04 capabilities</a>'); },
@@ -126,19 +153,170 @@ const commands = {
   '42'() { print('the answer · also: a good roadmap fits on one page.'); }
 };
 
+const COMMAND_NAMES = Object.keys(commands).sort(function (a, b) {
+  if (a === '42') return 1;
+  if (b === '42') return -1;
+  return a.localeCompare(b);
+});
+
+let suggestIndex = 0;
+let suggestBlurTimer;
+
+function resizeConsoleInput() {
+  if (!input || !inputMeasure) return;
+  inputMeasure.textContent = input.value;
+  input.style.width = inputMeasure.offsetWidth + 'px';
+}
+
+function getMatchingCommands(query) {
+  const q = (query || '').trim().toLowerCase();
+  if (!q) return [];
+  return COMMAND_NAMES.filter(function (cmd) { return cmd.startsWith(q); });
+}
+
+function hideSuggest() {
+  if (!suggestEl || !input) return;
+  suggestEl.hidden = true;
+  input.setAttribute('aria-expanded', 'false');
+}
+
+function renderSuggest() {
+  if (!suggestEl || !input || !form) return;
+  resizeConsoleInput();
+
+  const raw = input.value;
+  const q = raw.trim().toLowerCase();
+  const hasInput = raw.length > 0;
+
+  if (!hasInput || !form.classList.contains('is-focused')) {
+    hideSuggest();
+    if (unknownEl) unknownEl.hidden = true;
+    return;
+  }
+
+  const matches = getMatchingCommands(raw);
+  const showUnknown = matches.length === 0;
+
+  if (unknownEl) {
+    unknownEl.hidden = !showUnknown;
+    if (showUnknown) {
+      unknownEl.textContent = 'unknown command: ' + q + ' · type help for available commands';
+    }
+  }
+
+  if (!matches.length) {
+    hideSuggest();
+    return;
+  }
+
+  if (suggestIndex >= matches.length) suggestIndex = matches.length - 1;
+  if (suggestIndex < 0) suggestIndex = 0;
+
+  suggestEl.innerHTML = matches.map(function (cmd, i) {
+    const active = i === suggestIndex;
+    return '<li role="option" data-cmd="' + cmd + '" class="' + (active ? 'is-active' : '') + '" aria-selected="' + active + '">' + cmd + '</li>';
+  }).join('');
+  suggestEl.hidden = false;
+  input.setAttribute('aria-expanded', 'true');
+}
+
 function run(rawCmd) {
   const cmd = (rawCmd || '').trim().toLowerCase();
   if (!cmd) return;
   echo(cmd);
-  if (commands[cmd]) commands[cmd]();
-  else print('command not found', 'system');
+  if (commands[cmd]) {
+    commands[cmd]();
+  } else {
+    print('unknown command: <span class="console-accent">' + cmd + '</span> · try <span class="console-accent">help</span>', 'warn');
+  }
 }
 
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
-  run(input.value);
-  input.value = '';
-});
+if (form && input) {
+  const unlockConsoleInput = function () { input.removeAttribute('readonly'); };
+
+  input.addEventListener('focus', function () {
+    clearTimeout(suggestBlurTimer);
+    unlockConsoleInput();
+    form.classList.add('is-focused');
+    suggestIndex = 0;
+    hideSuggest();
+    if (unknownEl) unknownEl.hidden = true;
+    resizeConsoleInput();
+  });
+
+  input.addEventListener('blur', function () {
+    suggestBlurTimer = setTimeout(function () {
+      form.classList.remove('is-focused');
+      hideSuggest();
+      if (unknownEl) unknownEl.hidden = true;
+    }, 160);
+  });
+
+  input.addEventListener('input', function () {
+    suggestIndex = 0;
+    renderSuggest();
+  });
+
+  input.addEventListener('keydown', function (e) {
+    const matches = getMatchingCommands(input.value);
+    const panelOpen = suggestEl && !suggestEl.hidden && matches.length;
+
+    if (panelOpen && e.key === 'ArrowDown') {
+      e.preventDefault();
+      suggestIndex = (suggestIndex + 1) % matches.length;
+      renderSuggest();
+      return;
+    }
+    if (panelOpen && e.key === 'ArrowUp') {
+      e.preventDefault();
+      suggestIndex = (suggestIndex - 1 + matches.length) % matches.length;
+      renderSuggest();
+      return;
+    }
+    if (panelOpen && e.key === 'Tab') {
+      e.preventDefault();
+      input.value = matches[suggestIndex] || matches[0];
+      resizeConsoleInput();
+      renderSuggest();
+      return;
+    }
+    if (e.key === 'Escape') {
+      hideSuggest();
+      if (unknownEl) unknownEl.hidden = true;
+      suggestIndex = 0;
+    }
+  });
+
+  if (suggestEl) {
+    suggestEl.addEventListener('mousedown', function (e) {
+      e.preventDefault();
+      const li = e.target.closest('li[data-cmd]');
+      if (!li) return;
+      run(li.getAttribute('data-cmd'));
+      input.value = '';
+      resizeConsoleInput();
+      suggestIndex = 0;
+      renderSuggest();
+    });
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    run(input.value);
+    input.value = '';
+    resizeConsoleInput();
+    suggestIndex = 0;
+    renderSuggest();
+  });
+
+  if (inputRow) {
+    inputRow.addEventListener('click', function () {
+      input.focus();
+    });
+  }
+
+  resizeConsoleInput();
+}
 
 function openConsoleFromShortcut() {
   document.getElementById('console')?.scrollIntoView({ behavior: 'smooth', block: 'start' });

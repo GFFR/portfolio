@@ -12,6 +12,7 @@
   font-family: var(--mono); font-size: 11px; color: var(--mute);
   text-transform: uppercase; letter-spacing: .14em;
   position: relative;
+  border-radius: 16px 16px 0 0;
 }
 .console-head-right { margin-left: auto; }
 .console-head .dot {
@@ -29,22 +30,161 @@
   min-height: 280px;
 }
 .console-line { display: flex; gap: 10px; align-items: flex-start; }
-.console-line .prompt { color: var(--signal); }
+.console-line .prompt { color: var(--signal); flex-shrink: 0; }
 .console-line .text { color: var(--text); }
 .console-line .out { color: var(--text); padding-left: 20px; }
 .console-line.system .text { color: var(--mute); font-style: italic; }
-.console form {
-  display: flex; gap: 10px; align-items: center;
-  padding: 14px 22px 22px;
+.console-line.warn .out { color: var(--warn); }
+
+.console-form {
+  padding: 14px 22px 20px;
   border-top: 1px solid var(--line);
+  background: var(--ink-2);
+  border-radius: 0 0 16px 16px;
+  position: relative;
+  flex-shrink: 0;
 }
-.console input {
-  background: transparent; border: 0; outline: 0;
-  color: var(--text-strong); font-family: var(--mono); font-size: 14px;
-  flex: 1; caret-color: var(--signal);
+
+.console-input-wrap {
+  position: relative;
+  min-height: 1.7em;
 }
-.console input::placeholder { color: var(--mute); }
-.console form .prompt { color: var(--signal); font-family: var(--mono); }
+
+.console-float {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  margin-bottom: 8px;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.console-float > * {
+  pointer-events: auto;
+}
+
+.console-input-row {
+  align-items: center;
+  cursor: text;
+  margin: 0;
+}
+
+.console-input-field-wrap {
+  display: inline-flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  gap: 0;
+  position: relative;
+}
+
+.console-input-measure {
+  position: absolute;
+  visibility: hidden;
+  pointer-events: none;
+  white-space: pre;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: normal;
+}
+
+.console-input-field {
+  flex: 0 0 auto;
+  width: 0;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: normal;
+  caret-color: transparent;
+}
+
+.console-input-field::selection {
+  background: color-mix(in srgb, var(--signal) 22%, transparent);
+}
+
+.console-cursor {
+  flex-shrink: 0;
+  display: inline-block;
+  width: 2px;
+  height: 1.15em;
+  margin-bottom: 0.05em;
+  background: var(--signal);
+  border-radius: 1px;
+  animation: blink 1.1s steps(2) infinite;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--signal) 45%, transparent);
+}
+
+.console-form:not(.is-focused) .console-cursor {
+  opacity: 0;
+}
+
+.console-suggest {
+  margin: 0;
+  padding: 6px 0;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--ink-3);
+  box-shadow: 0 -8px 28px color-mix(in srgb, var(--text-strong) 10%, transparent);
+  max-height: min(200px, 32vh);
+  overflow-y: auto;
+}
+
+.console-suggest[hidden],
+.console-unknown[hidden] {
+  display: none !important;
+}
+
+.console-suggest li {
+  padding: 8px 14px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  letter-spacing: .02em;
+}
+
+.console-suggest li::before {
+  content: "$ ";
+  color: var(--signal);
+}
+
+.console-suggest li:hover,
+.console-suggest li.is-active {
+  background: color-mix(in srgb, var(--signal) 10%, transparent);
+  color: var(--text-strong);
+}
+
+.console-unknown {
+  margin: 0;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent);
+  background: var(--ink-3);
+  box-shadow: 0 -8px 28px color-mix(in srgb, var(--text-strong) 10%, transparent);
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.45;
+  color: var(--warn);
+  letter-spacing: .03em;
+}
+
+.console-unknown::before {
+  content: "⚠ ";
+  font-size: 10px;
+}
 
 .contact-head {
   display: grid; grid-template-columns: 1.4fr 1fr; gap: clamp(28px, 5vw, 80px);

@@ -1,0 +1,373 @@
+/* Print CV — always light mode, full expanded content */
+
+@media not print {
+  .print-only { display: none !important; }
+}
+
+@media print {
+  .screen-only { display: none !important; }
+
+  @page {
+    size: A4 portrait;
+    margin: 14mm 12mm;
+  }
+
+  :root {
+    --gutter: 12mm;
+    --max: 100%;
+  }
+
+  /* Force light palette (screen theme / system preference ignored) */
+  html,
+  html[data-theme="dark"],
+  html[data-theme="light"] {
+    color-scheme: only light;
+    --ink: #F6F4EF;
+    --ink-2: #FFFFFF;
+    --ink-3: #EDE9E1;
+    --line: #D9D4CB;
+    --line-2: #C8C2B8;
+    --mute: #6B7280;
+    --text: #3D4450;
+    --text-strong: #0E1014;
+    --signal: #187A44;
+    --signal-glow: rgba(24, 122, 68, .2);
+    --selection-fg: #FFFFFF;
+    --opbar-bg: #F6F4EF;
+    --release-now-bg: #E8F5EE;
+    --release-now-border: color-mix(in srgb, var(--signal) 40%, transparent);
+    --chip-bg: rgba(0, 0, 0, .04);
+    --surface-hover: rgba(0, 0, 0, .03);
+    --dock-bg: #FFFFFF;
+    --dock-shadow: none;
+    --dock-shadow-hover: none;
+    --halo-blend: multiply;
+    --halo-opacity: 0;
+  }
+
+  html {
+    scroll-behavior: auto;
+    height: auto !important;
+  }
+
+  body {
+    background: var(--ink);
+    color: var(--text);
+    overflow: visible !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  main,
+  section,
+  .wrap,
+  .boot,
+  .hero,
+  .hero-metrics,
+  .hero-grid,
+  .releases,
+  .release,
+  .release-body,
+  .release-body-inner,
+  .release-group,
+  .releases-earlier,
+  .releases-earlier-body,
+  .cases,
+  .case,
+  .manifesto-grid,
+  .toolkit-grid,
+  .brands,
+  .edu-grid,
+  .panel,
+  .stats,
+  .stat,
+  .console,
+  .console-host,
+  .tk,
+  .brandcell,
+  .edu {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+
+  * {
+    clip-path: none !important;
+  }
+
+  .release,
+  .panel,
+  .console,
+  .toolkit-grid,
+  .brands,
+  .edu-grid {
+    overflow: visible !important;
+    contain: none !important;
+  }
+
+  /* Preserve accent surfaces when browsers economize on color */
+  .release.now,
+  .panel,
+  .stat,
+  .case,
+  .tk,
+  .brandcell,
+  .edu,
+  .console,
+  .brand .gram,
+  .chip,
+  .status-pill {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Hide effects and interactive chrome */
+  .spotlight,
+  .halo,
+  .opnav,
+  .theme-toggle,
+  .console-dock,
+  .release-toggle,
+  .releases-earlier-head .toggle,
+  .cursor,
+  #console-form,
+  .console-float,
+  .console-suggest,
+  .console-unknown,
+  .console-line.system {
+    display: none !important;
+  }
+
+  /* Opbar: flat print header */
+  .opbar {
+    position: static;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background: var(--ink);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .dot {
+    animation: none;
+    box-shadow: none;
+  }
+
+  /* Reveals and counters */
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  /* Counters finalized in JS beforeprint; keep visible for print engines */
+  [data-count] {
+    font-family: var(--serif);
+    font-weight: 350;
+    font-size: 48px !important;
+    line-height: 0.92 !important;
+    color: var(--text-strong) !important;
+  }
+
+  [data-count]::after {
+    content: none !important;
+  }
+
+  /* Expand all releases and earlier builds */
+  .release-body {
+    max-height: none !important;
+    overflow: visible !important;
+    border-top: 1px solid var(--line) !important;
+  }
+
+  .releases-earlier-body {
+    max-height: none !important;
+    overflow: visible !important;
+    padding-top: 14px !important;
+    display: grid !important;
+    gap: 14px !important;
+  }
+
+  .releases-earlier-head {
+    cursor: default;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 0;
+  }
+
+  .release-head {
+    cursor: default;
+  }
+
+  /* Hero: fit page 1 */
+  .hero {
+    min-height: 0 !important;
+    padding: 20px 0 24px !important;
+  }
+
+  .display,
+  .hero-title.display {
+    font-size: clamp(48px, 9vw, 88px) !important;
+  }
+
+  .hero-metrics {
+    padding: 24px 0 32px !important;
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+
+  .stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .boot {
+    padding-bottom: 0;
+  }
+
+  section {
+    padding: 28px var(--gutter) !important;
+    scroll-margin-top: 0;
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  #readme {
+    padding-top: 32px !important;
+  }
+
+  /* Pagination: allow long blocks to flow; only keep small units intact */
+  #cases,
+  #toolkit,
+  #shipped {
+    break-before: auto;
+    page-break-before: auto;
+  }
+
+  #console {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  .release,
+  .release-group,
+  .case,
+  .manifesto,
+  .toolkit-grid {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+
+  .release-head,
+  .releases-earlier-head,
+  .case-head,
+  .case-title,
+  .toolkit-head,
+  .section-tag {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .release-head,
+  .stat,
+  .brandcell,
+  .edu,
+  .tk,
+  .arc,
+  .panel,
+  .status-row {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .release-body,
+  .release-body-inner,
+  .case-foot,
+  .chiprow {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  p,
+  li,
+  .arc .v {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Print contact strip */
+  .print-contact {
+    display: block !important;
+    margin: 0 0 20px;
+    padding: 14px 18px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--ink-2);
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+
+  .print-contact a {
+    color: var(--signal);
+    text-decoration: none;
+  }
+
+  /* Console: static output only */
+  .console-body {
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .contact-head {
+    grid-template-columns: 1fr;
+    margin-bottom: 16px;
+  }
+
+  .contact-head h2 {
+    font-size: 48px !important;
+  }
+
+  .print-contact a::after {
+    content: none !important;
+  }
+
+  /* External links show URL */
+  a[href^="http"]::after,
+  a[href^="mailto:"]::after {
+    content: " (" attr(href) ")";
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--mute);
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+
+  a[href^="#"]::after {
+    content: none;
+  }
+
+  footer a[href^="#"]::after {
+    content: none;
+  }
+
+  .toolkit-head--edu {
+    margin-top: 40px !important;
+  }
+
+  .brandcell small {
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: normal !important;
+  }
+
+  .toolkit-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  @media print and (max-width: 140mm) {
+    .toolkit-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+}
