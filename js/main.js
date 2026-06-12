@@ -116,6 +116,13 @@ const inputRow = document.getElementById('console-input-row');
 const inputMeasure = document.getElementById('console-input-measure');
 const suggestEl = document.getElementById('console-suggest');
 const unknownEl = document.getElementById('console-unknown');
+const promptEl = inputRow?.querySelector('.prompt');
+const consoleHost = document.getElementById('console-host');
+const fullscreenBtn = document.getElementById('console-fullscreen-btn');
+
+let chatModeActive = false;
+let fullscreenActive = false;
+let fullscreenOrigin = null;
 
 function print(text, cls) {
   const line = document.createElement('div');
@@ -133,23 +140,33 @@ function echo(cmd) {
 
 const commands = {
   help() {
-    print('available · <span class="console-accent">help · whoami · status · email · linkedin · cv · github · site · skills · stack · brands · book · clear · 42</span>');
+    print('available · <span class="console-accent">help · whoami · status · email · linkedin · cv · github · site · skills · stack · brands · book · chat · fullscreen · clear · 42</span>');
+    print('gram · type <span class="console-accent">chat</span> or <span class="console-accent">ask</span> to talk to gram — <span class="console-accent">esc</span> to exit chat mode');
+    print('display · <span class="console-accent">fullscreen</span> or the ⛶ button in the header — <span class="console-accent">esc</span> to exit when not chatting');
+  },
+  ask() {
+    enterChatMode();
+  },
+  chat() {
+    enterChatMode();
   },
   whoami() { print('Gonçalo Ramalho — Product &amp; Innovation Leader. I turn ambiguity into shipped work. Lisbon.'); },
   status() { print('<span class="console-accent">● open to selective engagements · advisory, fractional, and full-time considered.</span>'); },
-  email() { print('opening mail client → <a class="console-accent" href="mailto:goncaloramalho88@gmail.com">goncaloramalho88@gmail.com</a>'); window.location.href = 'mailto:goncaloramalho88@gmail.com'; },
+  email() { print('opening mail client → <a class="console-accent" href="mailto:mynameis@goncalofframalho.com">mynameis@goncalofframalho.com</a>'); window.location.href = 'mailto:mynameis@goncalofframalho.com'; },
   linkedin() { print('opening → <a class="console-accent" target="_blank" rel="noopener" href="https://www.linkedin.com/in/goncalofframalho/">linkedin.com/in/goncalofframalho</a>'); window.open('https://www.linkedin.com/in/goncalofframalho/', '_blank'); },
   site() { print('opening → <a class="console-accent" target="_blank" rel="noopener" href="https://goncalofframalho.com">goncalofframalho.com</a>'); window.open('https://goncalofframalho.com', '_blank'); },
   cv() {
     print('this site prints as a CV — <span class="console-accent">File → Print</span> (or <kbd>Ctrl+P</kbd> / <kbd>⌘P</kbd>). Light mode, full changelog.');
     setTimeout(function () { window.print(); }, 400);
   },
-  book() { print('to book a call, email <a class="console-accent" href="mailto:goncaloramalho88@gmail.com">goncaloramalho88@gmail.com</a> with a 1-line context and your timezone.'); },
+  book() { print('to book a call, email <a class="console-accent" href="mailto:mynameis@goncalofframalho.com">mynameis@goncalofframalho.com</a> with a 1-line context and your timezone.'); },
   github() { print('roots in front-end (Angular era), now AI-augmented building. private repos mostly. happy to walk through anything in conversation.'); },
   skills() { print('strategy · product · operations · engineering · design · ai — see <a class="console-accent" href="#toolkit">04 capabilities</a>'); },
   stack() { print('hands-on: react · next · node · tailwind · figma · supabase · langchain · openai · claude · zapier · n8n · airtable · notion · linear · whatever the job needs.'); },
   brands() { print('Activate: Google · Schweppes · MTV · Nike · VW · Pandora. Platforms: Brixel · Gridwork · Avila Spaces. Plus Swiss banking &amp; insurance partners under NDA.'); },
   clear() { out.innerHTML = ''; },
+  fullscreen() { toggleFullscreen(); },
+  fs() { toggleFullscreen(); },
   '42'() { print('the answer · also: a good roadmap fits on one page.'); }
 };
 
@@ -166,6 +183,141 @@ function resizeConsoleInput() {
   if (!input || !inputMeasure) return;
   inputMeasure.textContent = input.value;
   input.style.width = inputMeasure.offsetWidth + 'px';
+}
+
+function isChatInput(raw) {
+  if (chatModeActive) return Boolean((raw || '').trim());
+  const t = (raw || '').trim();
+  if (!t) return false;
+  const lower = t.toLowerCase();
+  if (lower === 'ask' || lower === 'chat') return false;
+  return lower.startsWith('ask ') || lower.startsWith('chat ') || t.startsWith('?');
+}
+
+function parseChatQuestion(raw) {
+  const t = (raw || '').trim();
+  if (t.startsWith('?')) return t.slice(1).trim();
+  const lower = t.toLowerCase();
+  if (lower.startsWith('ask ')) return t.slice(4).trim();
+  if (lower.startsWith('chat ')) return t.slice(5).trim();
+  return t;
+}
+
+const chatHintEl = document.getElementById('console-chat-hint');
+
+function enterChatMode(skipWelcome) {
+  if (chatModeActive) return;
+  chatModeActive = true;
+  form?.classList.add('is-chat-mode');
+  if (promptEl) promptEl.textContent = 'gram>';
+  if (input) input.setAttribute('aria-label', 'Message for gram');
+  if (chatHintEl) chatHintEl.hidden = false;
+  hideSuggest();
+  if (unknownEl) unknownEl.hidden = true;
+  if (!skipWelcome) {
+    printChatBanner('gram · Gonçalo\'s AI assistant — ask about his work, experience, or availability.');
+  }
+  out?.classList.add('has-chat-thread');
+  scrollConsoleToEnd();
+}
+
+function exitChatMode() {
+  if (!chatModeActive) return;
+  chatModeActive = false;
+  form?.classList.remove('is-chat-mode');
+  if (promptEl) promptEl.textContent = '$';
+  if (input) input.setAttribute('aria-label', 'Console command or question');
+  if (chatHintEl) chatHintEl.hidden = true;
+  print('// back to commands · type <span class="console-accent">help</span> or <span class="console-accent">chat</span>', 'system');
+}
+
+function printChatBanner(text) {
+  const line = document.createElement('div');
+  line.className = 'console-line system chat-banner';
+  line.innerHTML = '<span class="out">' + text + '</span>';
+  out.appendChild(line);
+  scrollConsoleToEnd();
+}
+
+function scrollConsoleToEnd() {
+  if (out) out.scrollTop = out.scrollHeight;
+}
+
+function updateFullscreenUi() {
+  if (!fullscreenBtn) return;
+  fullscreenBtn.setAttribute('aria-pressed', fullscreenActive ? 'true' : 'false');
+  fullscreenBtn.setAttribute('aria-label', fullscreenActive ? 'Exit fullscreen' : 'Enter fullscreen');
+  fullscreenBtn.title = fullscreenActive ? 'Exit fullscreen' : 'Fullscreen';
+}
+
+function enterFullscreen() {
+  if (fullscreenActive || !consoleHost) return;
+  fullscreenOrigin = {
+    parent: consoleHost.parentNode,
+    next: consoleHost.nextSibling,
+  };
+  document.body.appendChild(consoleHost);
+  fullscreenActive = true;
+  consoleHost.classList.add('is-fullscreen');
+  document.body.classList.add('console-fullscreen-open');
+  updateFullscreenUi();
+  scrollConsoleToEnd();
+  setTimeout(function () { input?.focus({ preventScroll: true }); }, 80);
+}
+
+function exitFullscreen() {
+  if (!fullscreenActive || !consoleHost) return;
+  fullscreenActive = false;
+  consoleHost.classList.remove('is-fullscreen');
+  document.body.classList.remove('console-fullscreen-open');
+  if (fullscreenOrigin?.parent) {
+    fullscreenOrigin.parent.insertBefore(consoleHost, fullscreenOrigin.next);
+  }
+  fullscreenOrigin = null;
+  updateFullscreenUi();
+}
+
+function toggleFullscreen() {
+  if (fullscreenActive) exitFullscreen();
+  else enterFullscreen();
+}
+
+function handleConsoleEscape() {
+  if (chatModeActive) {
+    exitChatMode();
+    return true;
+  }
+  if (fullscreenActive) {
+    exitFullscreen();
+    return true;
+  }
+  return false;
+}
+
+function escapeChatHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function sendChat(question) {
+  if (window.ConsoleChat) {
+    ConsoleChat.ask(question, { out, print });
+  } else {
+    print('chat unavailable — hard refresh the page', 'warn');
+  }
+}
+
+function echoChat(text) {
+  const line = document.createElement('div');
+  line.className = 'console-line chat user';
+  line.innerHTML =
+    '<span class="chat-label chat-label-user" aria-hidden="true">you</span>' +
+    '<span class="chat-body">' + escapeChatHtml(text) + '</span>';
+  out.appendChild(line);
+  out.classList.add('has-chat-thread');
+  scrollConsoleToEnd();
 }
 
 function getMatchingCommands(query) {
@@ -194,13 +346,19 @@ function renderSuggest() {
     return;
   }
 
+  if (chatModeActive || isChatInput(raw)) {
+    hideSuggest();
+    if (unknownEl) unknownEl.hidden = true;
+    return;
+  }
+
   const matches = getMatchingCommands(raw);
   const showUnknown = matches.length === 0;
 
   if (unknownEl) {
     unknownEl.hidden = !showUnknown;
     if (showUnknown) {
-      unknownEl.textContent = 'unknown command: ' + q + ' · type help for available commands';
+      unknownEl.textContent = 'unknown command: ' + q + ' · try help or chat';
     }
   }
 
@@ -221,13 +379,40 @@ function renderSuggest() {
 }
 
 function run(rawCmd) {
-  const cmd = (rawCmd || '').trim().toLowerCase();
-  if (!cmd) return;
+  const raw = (rawCmd || '').trim();
+  if (!raw) return;
+
+  if (chatModeActive) {
+    echoChat(raw);
+    sendChat(raw);
+    return;
+  }
+
+  const lower = raw.toLowerCase();
+  const chatWithQuestion = lower.startsWith('ask ') || lower.startsWith('chat ') || raw.startsWith('?');
+
+  if (chatWithQuestion) {
+    const question = parseChatQuestion(raw);
+    enterChatMode(true);
+    if (question) {
+      echoChat(question);
+      sendChat(question);
+    }
+    return;
+  }
+
+  if (lower === 'ask' || lower === 'chat') {
+    echo(raw);
+    enterChatMode();
+    return;
+  }
+
+  const cmd = lower;
   echo(cmd);
   if (commands[cmd]) {
     commands[cmd]();
   } else {
-    print('unknown command: <span class="console-accent">' + cmd + '</span> · try <span class="console-accent">help</span>', 'warn');
+    print('unknown command: <span class="console-accent">' + cmd + '</span> · try <span class="console-accent">help</span> or <span class="console-accent">chat</span>', 'warn');
   }
 }
 
@@ -281,6 +466,10 @@ if (form && input) {
       return;
     }
     if (e.key === 'Escape') {
+      if (handleConsoleEscape()) {
+        e.preventDefault();
+        return;
+      }
       hideSuggest();
       if (unknownEl) unknownEl.hidden = true;
       suggestIndex = 0;
@@ -317,6 +506,17 @@ if (form && input) {
 
   resizeConsoleInput();
 }
+
+if (fullscreenBtn) {
+  fullscreenBtn.addEventListener('click', function () {
+    toggleFullscreen();
+  });
+}
+
+document.addEventListener('keydown', function (e) {
+  if (e.key !== 'Escape' || !fullscreenActive) return;
+  if (handleConsoleEscape()) e.preventDefault();
+});
 
 function openConsoleFromShortcut() {
   document.getElementById('console')?.scrollIntoView({ behavior: 'smooth', block: 'start' });

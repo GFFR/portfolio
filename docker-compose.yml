@@ -1,0 +1,20 @@
+services:
+  cv:
+    build: .
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - OPENROUTER_MODEL=${OPENROUTER_MODEL:-google/gemini-2.5-flash}
+      - MONTHLY_BUDGET_USD=${MONTHLY_BUDGET_USD:-5}
+      - SITE_URL=${SITE_URL:-https://goncalofframalho.com}
+      - RATE_LIMIT_MAX=${RATE_LIMIT_MAX:-20}
+      - USAGE_FILE_PATH=/app/persistent/usage.json
+    volumes:
+      - cv-usage:/app/persistent
+    restart: unless-stopped
+
+volumes:
+  cv-usage:

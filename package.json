@@ -1,0 +1,18 @@
+{
+  "name": "goncalofframalho-cv",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Gonçalo Ramalho · Product Console — static CV site with chat API",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0"
+  }
+}

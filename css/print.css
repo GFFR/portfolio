@@ -121,6 +121,8 @@
   .halo,
   .opnav,
   .theme-toggle,
+  .console-fs-btn,
+  .console-chat-hint,
   .console-dock,
   .release-toggle,
   .releases-earlier-head .toggle,
@@ -312,6 +314,19 @@
   }
 
   /* Console: static output only */
+  .console-host.is-fullscreen {
+    position: static !important;
+    inset: auto !important;
+    z-index: auto !important;
+    padding: 0 !important;
+    background: transparent !important;
+    animation: none !important;
+  }
+  .console-host.is-fullscreen .console {
+    flex: none !important;
+    border-radius: 16px !important;
+    border: 1px solid var(--line) !important;
+  }
   .console-body {
     min-height: 0;
     max-height: none;

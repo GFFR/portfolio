@@ -1,0 +1,268 @@
+{
+  "meta": {
+    "version": "1.0.0",
+    "updated": "2026-06-12",
+    "description": "Central knowledge base for the CV console chatbot. Edit this file to update what the bot can answer — no external scraping.",
+    "sources": ["goncalofframalho.com", "CREATIVE_BRIEF.md"]
+  },
+  "person": {
+    "name": "Gonçalo Ramalho",
+    "title": "Product & Innovation Leader",
+    "tagline": "I turn ambiguity into shipped work.",
+    "thesis": "I am the bridge between design, engineering, operations, and product.",
+    "location": "Lisbon, Portugal",
+    "remote": "Open to remote · selective relocation",
+    "languages": ["English", "Portuguese"],
+    "years_experience": 15,
+    "summary": "Fifteen years between design, engineering, and product — from zero-to-one inside a startup studio to enterprise platforms with banks and insurers, and now practical AI-enabled transformation. Shapes direction, aligns stakeholders, and stays close enough to design, engineering, and operations to make the work real."
+  },
+  "contact": {
+    "email": "mynameis@goncalofframalho.com",
+    "linkedin": "https://www.linkedin.com/in/goncalofframalho/",
+    "website": "https://goncalofframalho.com",
+    "booking": "Email with a 1-line context and your timezone to book a call."
+  },
+  "availability": {
+    "status": "open to selective engagements",
+    "types": ["advisory", "fractional", "full-time considered"],
+    "current_role": "Chief Innovation Officer at Avila Spaces (since Jan 2026)"
+  },
+  "stats": {
+    "years_building_products": 15,
+    "c_level_roles": 4,
+    "c_level_titles": ["COO", "CTO", "CPO", "CIO"],
+    "zero_to_one_platforms": 3,
+    "global_brands": "15+"
+  },
+  "current_build": {
+    "company": "Avila Spaces",
+    "role": "Chief Innovation Officer",
+    "since": "Jan 2026",
+    "focus": "AI-augmented internal tooling — ops, CRM, onboarding, reporting, financial, access control, and more",
+    "description": "Practical AI-enabled transformation across the most-awarded coworking brand in Portugal."
+  },
+  "releases": [
+    {
+      "version": "v6.0",
+      "status": "current",
+      "title": "Chief Innovation Officer · Avila Spaces",
+      "period": "Jan 2026 — Present",
+      "location": "Lisbon",
+      "highlights": [
+        "Brought a long-running digital platform initiative over the finish line — aligning external dev, internal needs, and launch priorities.",
+        "Internal dashboard layer centralising custom tools, ops processes, reporting, and member/lead activity.",
+        "AI-assisted automations across onboarding, lead conversion, invoicing, internal comms, and operational decisions.",
+        "Knowledge base that preserves operational memory and reduces dependency on individual employees.",
+        "CRM & ops systems improvements across member management, invoicing, access control, and internal workflows.",
+        "Reporting and insight flows to support data-informed management decisions."
+      ],
+      "outcome": "Platform launch landed · multi-site ops on one internal layer · management reporting without spreadsheet archaeology.",
+      "case_file": "Avila Spaces"
+    },
+    {
+      "version": "v5.0",
+      "title": "Chief Product Officer · Gridwork",
+      "period": "Aug 2023 — Dec 2025",
+      "location": "Zurich",
+      "highlights": [
+        "Adapted Brixel's transaction model into an enterprise product direction for financial institutions, agencies, sellers, and buyers",
+        "Translated banking, insurance, and fintech requirements into roadmap decisions, priorities, and process standards",
+        "Shipped product views for financial entities to manage properties and for agents to manage sales processes",
+        "Defined the product foundation for a broader real-estate transaction model connected to financial & service opportunities",
+        "Led the move from a B2C/B2B2C service model to a structured B2B product architecture"
+      ],
+      "outcome": "Swiss banking & insurance partners on a product surface · partner integrations off the custom-request treadmill.",
+      "case_file": "Gridwork"
+    },
+    {
+      "version": "v4.0",
+      "title": "Chief Product Officer · Brixel",
+      "period": "Sep 2022 — Jun 2025",
+      "location": "Zurich",
+      "highlights": [
+        "Product direction across customer-facing flows, internal service tooling, and partner-facing requirements",
+        "Refined the transaction model around sellers, buyers, agencies, service teams, and financial partners",
+        "Adapted product and integration requirements for banking and insurance partners"
+      ],
+      "outcome": "Sustained transaction volume in CH · banking & insurance partner integrations in production."
+    },
+    {
+      "version": "v3.0",
+      "title": "Interim CTO & Lead PM · Brixel",
+      "period": "Jan 2020 — Aug 2022",
+      "location": "Lisbon",
+      "highlights": [
+        "Designed and helped build the end-to-end platform across customer-facing flows and internal service tooling",
+        "Custom CRM and ops tooling — property onboarding, seller/buyer pipelines, listings, leads, document flows",
+        "Maintained continuity across product direction, technical execution, and operational needs after CTO departure"
+      ],
+      "outcome": "Product judgment in the loop with the actual code."
+    },
+    {
+      "version": "v2.0",
+      "title": "COO & Product Owner · Brixel (zero-to-one)",
+      "period": "Mar 2018 — Dec 2019",
+      "location": "Lisbon",
+      "highlights": [
+        "Prototypes, landing pages, and product experiments to validate concepts and customer needs",
+        "Identified the property transaction as the core value pool — pivot from agency tools to seller/buyer platform",
+        "Led Brixel's Portugal market entry: operations, hiring, partnerships, pricing, local adaptation"
+      ],
+      "outcome": "Portugal market live · pivot from agency tools to transaction platform validated."
+    },
+    {
+      "version": "v1.0",
+      "title": "Wide Ventures · Startup studio",
+      "period": "Apr 2015 — Feb 2018",
+      "location": "Lisbon",
+      "roles": ["COO", "PM", "Lead Front-end"],
+      "highlights": [
+        "Operated a studio focused on testing, building, and launching new venture concepts",
+        "Led early product work for venture concepts inside the studio",
+        "Built early products and prototypes hand-in-hand with design and product"
+      ],
+      "outcome": "The training ground for everything that followed."
+    },
+    {
+      "version": "v0.5",
+      "title": "Co-founder · Spotshot",
+      "period": "Aug 2014 — Jul 2016",
+      "location": "Lisbon",
+      "highlights": [
+        "Nightlife discovery app — pick where to go based on real-time music & venue activity",
+        "Public beta with early users and real-world testing",
+        "Worked through venue supply, user adoption, and copyright constraints"
+      ],
+      "outcome": "A desirable product still needs a clear business model — learned first-hand."
+    },
+    {
+      "version": "v0.1",
+      "title": "Digital Manager · ACTIVATE Brand Action",
+      "period": "Jan 2011 — Mar 2015",
+      "location": "Lisbon",
+      "highlights": [
+        "Digital experiences for Google, Schweppes, MTV, Nike, VW, Pandora",
+        "Websites, Facebook apps, mobile/web apps, digital campaigns, video mapping, interactive event activations",
+        "Expanded the agency's digital capability beyond event production into interactive products"
+      ],
+      "outcome": "Where the hands learned what the strategy could later ask for."
+    }
+  ],
+  "cases": [
+    {
+      "id": "avila",
+      "company": "Avila Spaces",
+      "role": "Chief Innovation Officer",
+      "period": "Jan 2026 — Jul 2026",
+      "location": "Lisbon",
+      "headline": "Make a service business operate like a product company — using AI as the lever, not the headline.",
+      "arc": {
+        "ambiguity": "A multi-site coworking operator with years of platform intent, ops knowledge in people's heads, and tooling that never quite connected.",
+        "clarity": "Ranked workflows by leverage — leads, onboarding, billing, access, reporting — and separated what needed a product decision from what AI could run quietly behind the scenes.",
+        "execution": "Stayed in the loop on vendor delivery while building the internal layer: one dashboard, targeted automations, and a knowledge base that outlasts any single hire.",
+        "outcome": "Customer platform live across Portugal's most-awarded coworking brand. Management sees member and lead activity in one place — not in five spreadsheets."
+      },
+      "capabilities": ["Strategy", "Product", "Operations", "Engineering", "AI"],
+      "duration": "6 months"
+    },
+    {
+      "id": "gridwork",
+      "company": "Gridwork",
+      "role": "CPO",
+      "period": "Aug 2023 — Dec 2025",
+      "location": "Zurich",
+      "headline": "Turn a validated service into a structured B2B product banks and insurers can integrate into.",
+      "arc": {
+        "ambiguity": "Gridwork is the B2B product line that grew out of Brixel's transaction model — enterprise partners wanted APIs and process standards, not the consumer-facing service.",
+        "clarity": "Framed the roadmap around what financial institutions, agencies, and internal ops each needed to see — partner requests compete with product surface area instead of one-off builds.",
+        "execution": "Ran product while Brixel and Gridwork overlapped — protecting continuity for existing users while opening the enterprise lane.",
+        "outcome": "Swiss banking and insurance partners on a structured product architecture. Integrations moved from bespoke projects to repeatable product capabilities."
+      },
+      "capabilities": ["Strategy", "Product", "Operations", "Engineering"],
+      "duration": "2 years 5 months"
+    },
+    {
+      "id": "brixel",
+      "company": "Brixel",
+      "roles": ["COO", "interim CTO", "CPO"],
+      "period": "Mar 2018 — Jun 2025",
+      "location": "Lisbon / Zurich",
+      "headline": "Take a real-estate idea from a studio whiteboard to a Swiss transaction platform with banking partners.",
+      "arc": {
+        "ambiguity": "An agency-tool sketch in a venture studio — plenty of hypotheses, no proof of where the margin lived.",
+        "clarity": "Named the transaction as the value pool and rebuilt the model around sellers, buyers, agencies, and financial partners.",
+        "execution": "Three chapters: validate and enter Portugal, build the platform as interim CTO, mature the Swiss operation as CPO.",
+        "outcome": "Seven years, two countries, sustained transaction volume in Switzerland. The operating proof that later became Gridwork's enterprise direction."
+      },
+      "capabilities": ["Strategy", "Product", "Operations", "Engineering", "Design"],
+      "duration": "7 years 4 months · 3 roles"
+    }
+  ],
+  "toolkit": [
+    {
+      "domain": "Strategy",
+      "skills": ["Unit economics & value-pool mapping", "GTM assumptions & positioning", "Zero-to-one & market-entry bets", "Pivot / consolidation decisions", "Partner & stakeholder alignment"]
+    },
+    {
+      "domain": "Product",
+      "skills": ["Roadmaps, priorities & trade-offs", "B2B / B2B2C / marketplace architecture", "Journey mapping & flow design", "Requirements → buildable scope", "API & integration product surfaces"]
+    },
+    {
+      "domain": "Operations",
+      "skills": ["Service → product operating models", "CRM, billing, access & member ops", "Dashboards, reporting & insight pipelines", "Knowledge bases & runbooks", "Cross-functional delivery coordination"]
+    },
+    {
+      "domain": "Engineering",
+      "skills": ["System design & feasibility trade-offs", "Interim CTO / hands-on delivery", "Modern web — React, Next.js, TypeScript & APIs", "Fintech & partner integration architecture", "Staying in the loop with the codebase"]
+    },
+    {
+      "domain": "Design",
+      "skills": ["Graphic & digital design foundation", "UX/UI judgment & critique", "Figma prototypes & landing-page craft", "Product-facing brand & UI language", "Campaign & interactive production (agency era)"]
+    },
+    {
+      "domain": "AI",
+      "skills": ["LLM-assisted build & review loops", "Workflow automation & light agents", "Ops-embedded AI (not slide-deck AI)", "Judgment + implementation in one loop", "Smaller teams, higher throughput"]
+    }
+  ],
+  "tech_stack": {
+    "hands_on": ["React", "Next.js", "Node", "TypeScript", "Tailwind", "Figma", "Supabase", "LangChain", "OpenAI", "Claude", "Zapier", "n8n", "Airtable", "Notion", "Linear"],
+    "note": "Whatever the job needs — roots in front-end (Angular era), now AI-augmented building. Private repos mostly; happy to walk through anything in conversation."
+  },
+  "brands": {
+    "agency": ["Google", "Schweppes", "MTV", "Nike", "Volkswagen", "Pandora"],
+    "platforms": ["Brixel", "Gridwork", "Avila Spaces"],
+    "enterprise": "Swiss banking & insurance partners on Brixel/Gridwork — under NDA, available to discuss in conversation."
+  },
+  "education": [
+    {
+      "institution": "Universidade Europeia",
+      "degree": "Master's degree · Management & Business Strategy",
+      "period": "2017 — 2019"
+    },
+    {
+      "institution": "ESAD · Caldas da Rainha",
+      "degree": "Bachelor's · Graphic & Digital Design",
+      "period": "2007 — 2010"
+    }
+  ],
+  "voice": {
+    "rules": [
+      "First person when speaking as Gonçalo. Direct. No fluff.",
+      "Lead with the verb: I shipped, I built, I turned.",
+      "Real numbers and named outcomes whenever possible.",
+      "Stay specific: name partners, brands, platforms.",
+      "One line of dry humor max — not more."
+    ],
+    "anchor": "I am the bridge."
+  },
+  "boundaries": {
+    "will_not_discuss": [
+      "Topics not covered in this knowledge base",
+      "Confidential NDA details beyond what is published here",
+      "Salary expectations or compensation numbers",
+      "Opinions about other people or companies",
+      "General knowledge, coding tutorials, or unrelated tasks"
+    ],
+    "nda_note": "Swiss banking & insurance partner names are under NDA — can confirm the work happened, not name specific institutions unless listed here."
+  }
+}

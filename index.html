@@ -10,8 +10,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="css/main.css" />
-<script src="js/theme.js"></script>
+<link rel="stylesheet" href="css/main.css?v=6.3.2" />
+<script src="js/theme.js?v=6.3.2"></script>
 </head>
 <body>
 
@@ -625,7 +625,7 @@
     </div>
 
     <p class="print-contact print-only" hidden>
-      <a href="mailto:goncaloramalho88@gmail.com">goncaloramalho88@gmail.com</a>
+      <a href="mailto:mynameis@goncalofframalho.com">mynameis@goncalofframalho.com</a>
       · <a href="https://www.linkedin.com/in/goncalofframalho/">linkedin.com/in/goncalofframalho</a>
       · <a href="https://goncalofframalho.com">goncalofframalho.com</a>
     </p>
@@ -633,17 +633,31 @@
     <div class="console-host" id="console-host">
     <div class="console reveal" id="console-el">
       <div class="console-head">
-        <span><span class="dot"></span> gram@console · ~ </span>
-        <span class="console-head-right">console v6.0</span>
+        <span class="console-head-title"><span class="dot"></span> gram@console · ~ </span>
+        <div class="console-head-actions">
+          <button type="button" id="console-fullscreen-btn" class="console-fs-btn" aria-label="Enter fullscreen" aria-pressed="false" title="Fullscreen">
+            <svg class="console-fs-icon console-fs-icon-expand" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M1.5 5V1.5H5M9 1.5H12.5V5M12.5 9V12.5H9M5 12.5H1.5V9" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <svg class="console-fs-icon console-fs-icon-collapse" width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M5 1.5H1.5V5M12.5 5V1.5H9M9 12.5H12.5V9M1.5 9V12.5H5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <span class="console-head-version">console v6.3.2</span>
+        </div>
       </div>
       <div class="console-body" id="console-out">
-        <div class="console-line system"><span class="text">// Enter a command — try help, email, linkedin, status.</span></div>
+        <div class="console-line system"><span class="text">// Commands: help, email, status — or type <span class="console-accent">chat</span> to talk to gram, Gonçalo's AI assistant</span></div>
         <div class="console-line"><span class="prompt">$</span> <span class="text">whoami</span></div>
         <div class="console-line"><span class="out">Gonçalo Ramalho — Product &amp; Innovation Leader. I turn ambiguity into shipped work. Lisbon.</span></div>
         <div class="console-line"><span class="prompt">$</span> <span class="text">status</span></div>
         <div class="console-line"><span class="out console-accent">● open to selective engagements · advisory, fractional, and full-time considered.</span></div>
       </div>
       <form id="console-form" class="console-form" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <p id="console-chat-hint" class="console-chat-hint" hidden>
+          <span class="chat-hint-dot" aria-hidden="true"></span>
+          chatting with gram · press <kbd>esc</kbd> to exit
+        </p>
         <div class="console-input-wrap">
           <div class="console-float" id="console-float" aria-live="polite">
             <ul id="console-suggest" class="console-suggest" role="listbox" hidden></ul>
@@ -658,7 +672,8 @@
               class="console-input-field"
               name="console-command"
               type="text"
-              aria-label="Console command"
+              aria-label="Console command or question"
+              placeholder=""
               aria-controls="console-suggest"
               aria-expanded="false"
               autocomplete="off"
@@ -697,6 +712,7 @@
   <span class="console-dock-arrow" aria-hidden="true">↓</span>
 </a>
 
-<script src="js/main.js" defer></script>
+<script src="js/console-chat.js?v=6.3.2" defer></script>
+<script src="js/main.js?v=6.3.2" defer></script>
 </body>
 </html>
