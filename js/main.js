@@ -209,7 +209,7 @@ function enterChatMode(skipWelcome) {
   if (chatModeActive) return;
   chatModeActive = true;
   form?.classList.add('is-chat-mode');
-  if (promptEl) promptEl.textContent = 'gram>';
+  if (promptEl) promptEl.textContent = 'you>';
   if (input) input.setAttribute('aria-label', 'Message for gram');
   if (chatHintEl) chatHintEl.hidden = false;
   hideSuggest();
