@@ -1,7 +1,21 @@
 /* ============ Console chat (streaming) ============ */
 (function () {
   const ASK_PREFIX = 'ask ';
+  const SESSION_KEY = 'gram-chat-session';
   let activeController = null;
+
+  function getSessionId() {
+    try {
+      let id = sessionStorage.getItem(SESSION_KEY);
+      if (!id) {
+        id = crypto.randomUUID();
+        sessionStorage.setItem(SESSION_KEY, id);
+      }
+      return id;
+    } catch {
+      return crypto.randomUUID();
+    }
+  }
 
   function isAskInput(raw) {
     const t = (raw || '').trim();
@@ -80,7 +94,7 @@
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: q, lang: detectLang(q) }),
+        body: JSON.stringify({ message: q, lang: detectLang(q), sessionId: getSessionId() }),
         signal,
       });
 

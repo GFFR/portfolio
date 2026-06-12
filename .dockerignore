@@ -2,5 +2,6 @@ node_modules
 .git
 .env
 data/usage.json
+data/chats/
 .DS_Store
 npm-debug.log*

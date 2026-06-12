@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Chat logs · gram</title>
+  <style>
+    :root {
+      --bg: #0f0f12;
+      --panel: #16161c;
+      --line: #2a2a34;
+      --text: #e8e6e3;
+      --mute: #8b8792;
+      --accent: #e8a85c;
+      --user: #7eb8da;
+      --gram: #c9b8e8;
+      --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+      --sans: system-ui, -apple-system, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+    header h1 {
+      margin: 0;
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--mute);
+    }
+    header h1 span { color: var(--accent); }
+    .meta { font-family: var(--mono); font-size: 11px; color: var(--mute); }
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 340px) 1fr;
+      min-height: calc(100vh - 53px);
+    }
+    @media (max-width: 800px) {
+      .layout { grid-template-columns: 1fr; }
+      .detail { border-left: none; border-top: 1px solid var(--line); }
+    }
+    .list {
+      border-right: 1px solid var(--line);
+      overflow: auto;
+      max-height: calc(100vh - 53px);
+    }
+    .list-empty {
+      padding: 24px 20px;
+      color: var(--mute);
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+    .session {
+      display: block;
+      width: 100%;
+      margin: 0;
+      padding: 14px 18px;
+      border: none;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      font: inherit;
+    }
+    .session:hover { background: #1c1c24; }
+    .session.is-active { background: #22222c; border-left: 2px solid var(--accent); }
+    .session-time {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--mute);
+      margin-bottom: 4px;
+    }
+    .session-preview {
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .session-sub {
+      margin-top: 4px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--mute);
+    }
+    .detail {
+      overflow: auto;
+      max-height: calc(100vh - 53px);
+      padding: 20px 24px 40px;
+    }
+    .detail-empty {
+      color: var(--mute);
+      font-family: var(--mono);
+      font-size: 12px;
+      padding-top: 40px;
+    }
+    .detail-head {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .detail-head h2 {
+      margin: 0 0 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      word-break: break-all;
+    }
+    .detail-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--mute);
+    }
+    .exchange {
+      margin-bottom: 24px;
+    }
+    .msg {
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+    }
+    .msg-role {
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .msg.user .msg-role { color: var(--user); }
+    .msg.gram .msg-role { color: var(--gram); }
+    .msg-time {
+      float: right;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--mute);
+      font-weight: normal;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .msg-body {
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 13px;
+    }
+    .msg-tags {
+      margin-top: 8px;
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--mute);
+    }
+    .error-banner {
+      margin: 16px 20px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid #5c3030;
+      background: #2a1818;
+      color: #ff9b8a;
+      font-family: var(--mono);
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><span>gram</span> · chat logs</h1>
+    <div class="meta" id="summary">loading…</div>
+  </header>
+  <div id="error" class="error-banner" hidden></div>
+  <div class="layout">
+    <aside class="list" id="list">
+      <div class="list-empty">Loading sessions…</div>
+    </aside>
+    <main class="detail" id="detail">
+      <div class="detail-empty">Select a session</div>
+    </main>
+  </div>
+  <script>
+    const listEl = document.getElementById('list');
+    const detailEl = document.getElementById('detail');
+    const summaryEl = document.getElementById('summary');
+    const errorEl = document.getElementById('error');
+    let activeId = null;
+
+    function fmt(iso) {
+      if (!iso) return '—';
+      const d = new Date(iso);
+      return d.toLocaleString(undefined, {
+        month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+      });
+    }
+
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function showError(msg) {
+      errorEl.hidden = false;
+      errorEl.textContent = msg;
+    }
+
+    async function api(path) {
+      const res = await fetch(path);
+      if (!res.ok) throw new Error(res.status === 401 ? 'Unauthorized' : `HTTP ${res.status}`);
+      return res.json();
+    }
+
+    function renderList(sessions) {
+      summaryEl.textContent = `${sessions.length} session${sessions.length === 1 ? '' : 's'}`;
+      if (!sessions.length) {
+        listEl.innerHTML = '<div class="list-empty">No chats logged yet.</div>';
+        return;
+      }
+      listEl.innerHTML = sessions.map((s) => `
+        <button type="button" class="session${s.sessionId === activeId ? ' is-active' : ''}" data-id="${esc(s.sessionId)}">
+          <div class="session-time">${esc(fmt(s.updatedAt))}</div>
+          <div class="session-preview">${esc(s.preview || '(empty)')}</div>
+          <div class="session-sub">${s.exchanges} exchange${s.exchanges === 1 ? '' : 's'}${s.ip ? ` · ${esc(s.ip)}` : ''}</div>
+        </button>
+      `).join('');
+
+      listEl.querySelectorAll('.session').forEach((btn) => {
+        btn.addEventListener('click', () => loadSession(btn.dataset.id));
+      });
+    }
+
+    function renderDetail(session) {
+      const messages = session.messages || [];
+      const pairs = [];
+      for (let i = 0; i < messages.length; i++) {
+        if (messages[i].role === 'user') {
+          pairs.push({ user: messages[i], gram: messages[i + 1]?.role === 'assistant' ? messages[i + 1] : null });
+        }
+      }
+
+      detailEl.innerHTML = `
+        <div class="detail-head">
+          <h2>${esc(session.sessionId)}</h2>
+          <div class="detail-meta">
+            <span>created ${esc(fmt(session.createdAt))}</span>
+            <span>updated ${esc(fmt(session.updatedAt))}</span>
+            ${session.ip ? `<span>ip ${esc(session.ip)}</span>` : ''}
+            <span>${pairs.length} exchange${pairs.length === 1 ? '' : 's'}</span>
+          </div>
+        </div>
+        ${pairs.map(({ user, gram }) => `
+          <div class="exchange">
+            <div class="msg user">
+              <div class="msg-role">you <span class="msg-time">${esc(fmt(user.at))}${user.lang ? ` · ${esc(user.lang)}` : ''}</span></div>
+              <div class="msg-body">${esc(user.content)}</div>
+            </div>
+            ${gram ? `
+              <div class="msg gram">
+                <div class="msg-role">gram <span class="msg-time">${esc(fmt(gram.at))}</span></div>
+                <div class="msg-body">${esc(gram.content)}</div>
+                ${gram.error || gram.budgetExhausted || gram.usage ? `
+                  <div class="msg-tags">${
+                    gram.budgetExhausted ? 'budget exhausted' :
+                    gram.error ? `error: ${esc(gram.error)}` :
+                    gram.usage ? `tokens ${gram.usage.prompt_tokens || 0} in / ${gram.usage.completion_tokens || 0} out` : ''
+                  }</div>
+                ` : ''}
+              </div>
+            ` : ''}
+          </div>
+        `).join('')}
+      `;
+    }
+
+    async function loadSession(id) {
+      activeId = id;
+      try {
+        const { sessions } = await api('/api/admin/sessions');
+        renderList(sessions);
+        const session = await api(`/api/admin/sessions/${encodeURIComponent(id)}`);
+        renderDetail(session);
+      } catch (err) {
+        showError(err.message);
+      }
+    }
+
+    async function init() {
+      try {
+        const { sessions } = await api('/api/admin/sessions');
+        renderList(sessions);
+        if (sessions.length) await loadSession(sessions[0].sessionId);
+      } catch (err) {
+        listEl.innerHTML = '<div class="list-empty">Could not load sessions.</div>';
+        showError(err.message);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>

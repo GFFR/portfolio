@@ -5,6 +5,9 @@ const express = require('express');
 const rateLimit = require('express-rate-limit');
 const { streamChat } = require('./chat');
 const { getBudgetState } = require('./budget');
+const { adminAuth, adminEnabled } = require('./admin-auth');
+const { pageRouter, apiRouter } = require('./admin');
+const { setNoCache } = require('./no-cache');
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
 const ROOT = path.join(__dirname, '..');
@@ -22,6 +25,7 @@ const chatLimiter = rateLimit({
 });
 
 app.get('/api/health', (_req, res) => {
+  setNoCache(res);
   res.json({
     ok: true,
     chat: Boolean(process.env.OPENROUTER_API_KEY),
@@ -37,17 +41,23 @@ app.post('/api/chat', chatLimiter, (req, res) => {
   });
 });
 
+if (adminEnabled()) {
+  app.use('/admin', adminAuth, pageRouter);
+  app.use('/api/admin', adminAuth, apiRouter);
+}
+
 app.use(express.static(ROOT, {
   index: 'index.html',
-  maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0,
-  setHeaders(res, filePath) {
-    if (filePath.endsWith('.html')) {
-      res.setHeader('Cache-Control', 'no-cache');
-    }
+  maxAge: 0,
+  etag: false,
+  lastModified: false,
+  setHeaders(res) {
+    setNoCache(res);
   },
 }));
 
 app.use((_req, res) => {
+  setNoCache(res);
   res.sendFile(path.join(ROOT, 'index.html'));
 });
 
@@ -55,5 +65,8 @@ app.listen(PORT, () => {
   console.log(`Product Console running on :${PORT}`);
   if (!process.env.OPENROUTER_API_KEY) {
     console.warn('OPENROUTER_API_KEY not set — chat disabled, static site only');
+  }
+  if (adminEnabled()) {
+    console.log('Admin logs at /admin/logs');
   }
 });

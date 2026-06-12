@@ -1,5 +1,6 @@
 const { buildSystemPrompt } = require('./prompts');
 const { isBudgetExhausted, recordUsage } = require('./budget');
+const { logExchange } = require('./chat-log');
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const MODEL = process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flash';
@@ -37,7 +38,7 @@ async function streamChat(req, res) {
     return;
   }
 
-  const { message, lang: clientLang } = req.body || {};
+  const { message, lang: clientLang, sessionId } = req.body || {};
   const question = typeof message === 'string' ? message.trim() : '';
 
   if (!question || question.length > 2000) {
@@ -55,8 +56,17 @@ async function streamChat(req, res) {
   res.flushHeaders?.();
 
   if (isBudgetExhausted()) {
-    sseWrite(res, 'token', { text: holidayMessage(lang) });
+    const answer = holidayMessage(lang);
+    sseWrite(res, 'token', { text: answer });
     sseWrite(res, 'done', { budgetExhausted: true });
+    logExchange({
+      sessionId,
+      ip: req.ip,
+      lang,
+      question,
+      answer,
+      meta: { budgetExhausted: true },
+    });
     res.end();
     return;
   }
@@ -85,7 +95,16 @@ async function streamChat(req, res) {
       }),
     });
   } catch (err) {
-    sseWrite(res, 'error', { message: 'Could not reach the model. Try again or use `email`.' });
+    const answer = 'Could not reach the model. Try again or use `email`.';
+    sseWrite(res, 'error', { message: answer });
+    logExchange({
+      sessionId,
+      ip: req.ip,
+      lang,
+      question,
+      answer,
+      meta: { error: 'upstream_unreachable' },
+    });
     res.end();
     return;
   }
@@ -93,10 +112,17 @@ async function streamChat(req, res) {
   if (!upstream.ok) {
     const errText = await upstream.text().catch(() => '');
     console.error('[chat] OpenRouter error', upstream.status, errText.slice(0, 500));
-    sseWrite(res, 'error', {
-      message: lang === 'pt'
-        ? 'Algo correu mal. Tenta de novo ou usa `email`.'
-        : 'Something went wrong. Try again or use `email`.',
+    const answer = lang === 'pt'
+      ? 'Algo correu mal. Tenta de novo ou usa `email`.'
+      : 'Something went wrong. Try again or use `email`.';
+    sseWrite(res, 'error', { message: answer });
+    logExchange({
+      sessionId,
+      ip: req.ip,
+      lang,
+      question,
+      answer,
+      meta: { error: `openrouter_${upstream.status}` },
     });
     res.end();
     return;
@@ -106,6 +132,7 @@ async function streamChat(req, res) {
   const decoder = new TextDecoder();
   let buffer = '';
   let usage = null;
+  let fullAnswer = '';
 
   try {
     while (true) {
@@ -132,17 +159,37 @@ async function streamChat(req, res) {
         if (parsed.usage) usage = parsed.usage;
 
         const delta = parsed.choices?.[0]?.delta?.content;
-        if (delta) sseWrite(res, 'token', { text: delta });
+        if (delta) {
+          fullAnswer += delta;
+          sseWrite(res, 'token', { text: delta });
+        }
       }
     }
   } catch (err) {
     console.error('[chat] stream error', err);
-    sseWrite(res, 'error', { message: 'Stream interrupted.' });
+    const answer = 'Stream interrupted.';
+    sseWrite(res, 'error', { message: answer });
+    logExchange({
+      sessionId,
+      ip: req.ip,
+      lang,
+      question,
+      answer: fullAnswer || answer,
+      meta: { error: 'stream_interrupted', partial: Boolean(fullAnswer) },
+    });
     res.end();
     return;
   }
 
   if (usage) recordUsage(usage);
+  logExchange({
+    sessionId,
+    ip: req.ip,
+    lang,
+    question,
+    answer: fullAnswer,
+    meta: { usage: usage || null },
+  });
   sseWrite(res, 'done', { usage: usage || null });
   res.end();
 }

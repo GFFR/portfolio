@@ -12,6 +12,8 @@ services:
       - SITE_URL=${SITE_URL:-https://goncalofframalho.com}
       - RATE_LIMIT_MAX=${RATE_LIMIT_MAX:-20}
       - USAGE_FILE_PATH=/app/persistent/usage.json
+      - CHAT_LOG_DIR=/app/persistent/chats
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     volumes:
       - cv-usage:/app/persistent
     restart: unless-stopped
