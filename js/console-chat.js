@@ -92,7 +92,11 @@
       '<span class="chat-label chat-label-gram" aria-hidden="true">gram</span>' +
       '<span class="chat-body">' +
         '<span class="out chat-out"></span>' +
-        '<span class="chat-cursor" aria-hidden="true"></span>' +
+        '<span class="chat-typing" role="status" aria-label="typing">' +
+          '<span class="chat-typing-dot"></span>' +
+          '<span class="chat-typing-dot"></span>' +
+          '<span class="chat-typing-dot"></span>' +
+        '</span>' +
       '</span>';
     out.appendChild(line);
     out.classList.add('has-chat-thread');
