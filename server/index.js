@@ -56,8 +56,14 @@ app.use(express.static(ROOT, {
   },
 }));
 
-app.use((_req, res) => {
+const ASSET_PATH = /\.(?:css|js|mjs|json|png|jpe?g|gif|webp|svg|ico|woff2?|map)$/i;
+
+app.use((req, res) => {
   setNoCache(res);
+  if (ASSET_PATH.test(req.path)) {
+    res.status(404).type('text/plain').send('Not found');
+    return;
+  }
   res.sendFile(path.join(ROOT, 'index.html'));
 });
 
