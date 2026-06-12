@@ -1,19 +1,26 @@
-/* ============ gram chat UI ============ */
+/* ============ gram chat UI (inline + floating widget) ============ */
 (function () {
   const out = document.getElementById('gram-chat-messages');
   const form = document.getElementById('gram-chat-form');
   const input = document.getElementById('gram-chat-input');
   const emptyEl = document.getElementById('gram-chat-empty');
   const host = document.getElementById('gram-chat-host');
+  const inlineSlot = document.getElementById('gram-chat-inline-slot');
+  const floatSlot = document.getElementById('gram-chat-float-slot');
+  const layer = document.getElementById('gram-chat-layer');
+  const backdrop = layer?.querySelector('.gram-chat-backdrop');
+  const dock = document.getElementById('chat-dock');
+  const section = document.getElementById('chat');
   const fullscreenBtn = document.getElementById('gram-chat-fs-btn');
-  const quickEl = document.getElementById('gram-chat-quick');
-
-  if (!out || !form || !input) return;
+  const closeBtn = document.getElementById('gram-chat-close-btn');
+  if (!out || !form || !input || !host || !inlineSlot || !floatSlot || !layer) return;
 
   let greetingSent = false;
   let greetingPending = false;
   let fullscreenActive = false;
-  let fullscreenOrigin = null;
+  let fullscreenReturnSlot = 'inline';
+  let floatOpen = false;
+  let sectionVisible = false;
   let placeholderTimer = null;
   let placeholderIndex = 0;
 
@@ -24,6 +31,8 @@
     "Tell me about the Brixel platform",
     "What's his experience with AI transformation?",
   ];
+
+  const MOBILE_MQ = window.matchMedia('(max-width: 720px)');
 
   function escapeHtml(str) {
     return String(str)
@@ -80,6 +89,80 @@
     }
   }
 
+  function placeHost(slot) {
+    const target = slot === 'inline' ? inlineSlot : floatSlot;
+    if (host.parentNode !== target) {
+      target.appendChild(host);
+    }
+    host.classList.toggle('is-inline', slot === 'inline');
+    host.classList.toggle('is-float', slot === 'float');
+  }
+
+  function setDockVisible(show) {
+    if (!dock) return;
+    dock.classList.toggle('is-visible', show);
+    document.body.classList.toggle('has-chat-dock', show);
+  }
+
+  function isSectionInView() {
+    if (!section) return false;
+    const rect = section.getBoundingClientRect();
+    return rect.top < window.innerHeight * 0.92 && rect.bottom > 48;
+  }
+
+  function focusInline() {
+    section?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(function () { input.focus({ preventScroll: true }); }, 400);
+  }
+
+  function openFloat() {
+    if (sectionVisible) {
+      focusInline();
+      return;
+    }
+    if (floatOpen || fullscreenActive) return;
+
+    floatOpen = true;
+    placeHost('float');
+    layer.classList.add('is-open');
+    layer.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('gram-chat-float-open');
+    setDockVisible(false);
+    scrollToEnd();
+    setTimeout(function () { input.focus({ preventScroll: true }); }, MOBILE_MQ.matches ? 120 : 80);
+    ensureGreeting();
+  }
+
+  function closeFloat() {
+    if (!floatOpen) return;
+
+    floatOpen = false;
+    layer.classList.remove('is-open');
+    layer.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('gram-chat-float-open');
+
+    if (!sectionVisible) {
+      setDockVisible(true);
+    }
+  }
+
+  function onSectionVisible(visible) {
+    sectionVisible = visible;
+
+    if (visible) {
+      if (floatOpen) closeFloat();
+      if (fullscreenActive) exitFullscreen();
+      placeHost('inline');
+      setDockVisible(false);
+      return;
+    }
+
+    if (!fullscreenActive) {
+      placeHost('float');
+    }
+    setDockVisible(!floatOpen);
+  }
+
   function startPlaceholderRotation() {
     if (placeholderTimer || document.activeElement === input) return;
     placeholderTimer = setInterval(function () {
@@ -102,12 +185,22 @@
     fullscreenBtn.title = fullscreenActive ? 'Exit fullscreen' : 'Fullscreen';
   }
 
+  function restoreHostAfterFullscreen() {
+    if (fullscreenReturnSlot === 'inline' && sectionVisible) {
+      placeHost('inline');
+    } else if (floatOpen) {
+      placeHost('float');
+    } else if (sectionVisible) {
+      placeHost('inline');
+    } else {
+      placeHost('float');
+    }
+  }
+
   function enterFullscreen() {
-    if (fullscreenActive || !host) return;
-    fullscreenOrigin = {
-      parent: host.parentNode,
-      next: host.nextSibling,
-    };
+    if (fullscreenActive || !host || MOBILE_MQ.matches) return;
+
+    fullscreenReturnSlot = sectionVisible ? 'inline' : 'float';
     document.body.appendChild(host);
     fullscreenActive = true;
     host.classList.add('is-fullscreen');
@@ -119,13 +212,11 @@
 
   function exitFullscreen() {
     if (!fullscreenActive || !host) return;
+
     fullscreenActive = false;
     host.classList.remove('is-fullscreen');
     document.body.classList.remove('gram-chat-fullscreen-open');
-    if (fullscreenOrigin?.parent) {
-      fullscreenOrigin.parent.insertBefore(host, fullscreenOrigin.next);
-    }
-    fullscreenOrigin = null;
+    restoreHostAfterFullscreen();
     updateFullscreenUi();
   }
 
@@ -134,45 +225,21 @@
     else enterFullscreen();
   }
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    sendMessage(input.value);
-  });
-
-  input.addEventListener('focus', function () {
-    form.classList.add('is-focused');
-    stopPlaceholderRotation();
-    ensureGreeting();
-  });
-
-  input.addEventListener('blur', function () {
-    form.classList.remove('is-focused');
-    if (!input.value) startPlaceholderRotation();
-  });
-
-  if (quickEl) {
-    quickEl.addEventListener('click', function (e) {
-      const chip = e.target.closest('[data-ask]');
-      if (!chip) return;
-      sendMessage(chip.getAttribute('data-ask'));
-      input.focus({ preventScroll: true });
-    });
-  }
-
-  if (fullscreenBtn) {
-    fullscreenBtn.addEventListener('click', toggleFullscreen);
-  }
-
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && fullscreenActive) {
+  function handleClose() {
+    if (fullscreenActive) {
       exitFullscreen();
-      e.preventDefault();
+      return;
     }
-  });
+    if (floatOpen) closeFloat();
+  }
 
   function openChatFromShortcut() {
-    document.getElementById('chat')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setTimeout(function () { input.focus({ preventScroll: true }); }, 400);
+    if (sectionVisible) {
+      input.focus({ preventScroll: true });
+      ensureGreeting();
+      return;
+    }
+    openFloat();
   }
 
   function isSpaceChatShortcut(e) {
@@ -187,27 +254,106 @@
     return true;
   }
 
+  function handleChatLinkClick(e) {
+    if (sectionVisible) return;
+    e.preventDefault();
+    openFloat();
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    sendMessage(input.value);
+  });
+
+  function unlockInput() {
+    if (input.hasAttribute('readonly')) input.removeAttribute('readonly');
+  }
+
+  input.addEventListener('focus', function () {
+    unlockInput();
+    form.classList.add('is-focused');
+    stopPlaceholderRotation();
+    ensureGreeting();
+  });
+
+  input.addEventListener('mousedown', unlockInput);
+  input.addEventListener('touchstart', unlockInput, { passive: true });
+
+  input.addEventListener('blur', function () {
+    form.classList.remove('is-focused');
+    if (!input.value) startPlaceholderRotation();
+  });
+
+  host.addEventListener('click', function (e) {
+    const trigger = e.target.closest('[data-ask]');
+    if (!trigger) return;
+    sendMessage(trigger.getAttribute('data-ask'));
+    input.focus({ preventScroll: true });
+  });
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', handleClose);
+  }
+
+  if (backdrop) {
+    backdrop.addEventListener('click', closeFloat);
+  }
+
+  if (dock) {
+    dock.addEventListener('click', openFloat);
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (fullscreenActive) {
+      exitFullscreen();
+      e.preventDefault();
+      return;
+    }
+    if (floatOpen) {
+      closeFloat();
+      e.preventDefault();
+    }
+  });
+
   document.addEventListener('keydown', function (e) {
     if (!isSpaceChatShortcut(e)) return;
     e.preventDefault();
     openChatFromShortcut();
   });
 
-  /* ============ Chat dock ============ */
-  const dock = document.getElementById('chat-dock');
-  const section = document.getElementById('chat');
+  document.querySelectorAll('a[href="#chat"]').forEach(function (link) {
+    link.addEventListener('click', handleChatLinkClick);
+  });
 
-  if (dock && section) {
+  if (section) {
     const dockIO = new IntersectionObserver(function ([entry]) {
-      const show = !entry.isIntersecting;
-      dock.classList.toggle('is-visible', show);
-      document.body.classList.toggle('has-chat-dock', show);
+      onSectionVisible(entry.isIntersecting);
     }, { threshold: 0.08, rootMargin: '0px 0px -48px 0px' });
     dockIO.observe(section);
+  }
 
-    dock.addEventListener('click', function () {
-      setTimeout(function () { input.focus({ preventScroll: true }); }, 500);
-    });
+  window.addEventListener('beforeprint', function () {
+    if (!sectionVisible) placeHost('inline');
+  });
+
+  sectionVisible = isSectionInView();
+  if (sectionVisible) {
+    placeHost('inline');
+    setDockVisible(false);
+  } else {
+    placeHost('float');
+    setDockVisible(true);
+  }
+
+  if (location.hash === '#chat') {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+    if (sectionVisible) focusInline();
+    else openFloat();
   }
 
   input.placeholder = PLACEHOLDERS[0];

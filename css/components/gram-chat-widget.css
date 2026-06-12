@@ -1,0 +1,223 @@
+/* —— Floating chat layer —— */
+.gram-chat-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.gram-chat-layer.is-open {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.gram-chat-backdrop {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: color-mix(in srgb, var(--ink) 55%, transparent);
+  opacity: 0;
+  cursor: pointer;
+  transition: opacity 0.22s ease;
+}
+
+.gram-chat-layer.is-open .gram-chat-backdrop {
+  opacity: 1;
+}
+
+.gram-chat-float-slot {
+  position: absolute;
+  right: clamp(16px, 3vw, 28px);
+  bottom: clamp(16px, 3vw, 28px);
+  width: min(400px, calc(100vw - 32px));
+  height: min(560px, calc(100dvh - 100px));
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  opacity: 0;
+  transform: translateY(16px) scale(0.97);
+  transform-origin: bottom right;
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+.gram-chat-layer.is-open .gram-chat-float-slot {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.gram-chat-float-slot .gram-chat-host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.gram-chat-float-slot .gram-chat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  box-shadow: 0 24px 64px color-mix(in srgb, var(--text-strong) 14%, transparent);
+}
+
+.gram-chat-float-slot .gram-chat-messages {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+}
+
+body.gram-chat-float-open {
+  overflow: hidden;
+}
+
+@media (min-width: 721px) {
+  body.gram-chat-float-open {
+    overflow: auto;
+  }
+}
+
+/* —— Dock pill —— */
+.chat-dock {
+  position: fixed;
+  z-index: 45;
+  right: clamp(16px, 3vw, 28px);
+  bottom: clamp(16px, 3vw, 28px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 12px 16px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--signal) 28%, transparent);
+  background: var(--dock-bg);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  cursor: pointer;
+  box-shadow: var(--dock-shadow), 0 0 0 1px color-mix(in srgb, var(--signal) 8%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 0.28s ease, transform 0.28s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chat-dock.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.chat-dock:hover {
+  border-color: color-mix(in srgb, var(--signal) 50%, transparent);
+  box-shadow: var(--dock-shadow-hover), 0 0 24px color-mix(in srgb, var(--signal) 12%, transparent);
+  color: var(--text-strong);
+}
+
+.chat-dock:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
+.chat-dock-label {
+  color: var(--text-strong);
+  font-weight: 500;
+  font-size: 13px;
+}
+
+.chat-dock-label kbd {
+  border: 1px solid var(--line-2);
+  border-bottom-width: 2px;
+  padding: 0 7px;
+  border-radius: 4px;
+  color: var(--text);
+  background: var(--ink-3);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.chat-dock-word { color: var(--signal); }
+.chat-dock:hover .chat-dock-word { color: var(--text-strong); }
+
+body.has-chat-dock { scroll-padding-bottom: 88px; }
+
+/* —— Mobile: float opens fullscreen —— */
+@media (max-width: 720px) {
+  .gram-chat-float-slot {
+    inset: 0;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    max-height: none;
+    transform: translateY(100%);
+    transform-origin: bottom center;
+    border-radius: 0;
+  }
+
+  .gram-chat-layer.is-open .gram-chat-float-slot {
+    transform: translateY(0) scale(1);
+  }
+
+  .gram-chat-layer.is-open .gram-chat-backdrop {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .gram-chat-float-slot .gram-chat {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    box-shadow: none;
+  }
+
+  .gram-chat-float-slot .gram-chat-head {
+    border-radius: 0;
+    padding-top: max(16px, env(safe-area-inset-top, 0));
+  }
+
+  .gram-chat-float-slot .gram-chat-form {
+    padding-bottom: max(18px, env(safe-area-inset-bottom, 0));
+    border-radius: 0;
+  }
+
+  .gram-chat-layer.is-open .gram-chat-fs-btn {
+    display: none;
+  }
+
+  .chat-dock {
+    left: 12px;
+    right: 12px;
+    max-width: none;
+  }
+
+  .chat-dock-label {
+    font-size: 12px;
+  }
+
+  body.has-chat-dock { scroll-padding-bottom: 72px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gram-chat-float-slot,
+  .gram-chat-layer.is-open .gram-chat-float-slot,
+  .gram-chat-backdrop,
+  .chat-dock,
+  .chat-dock.is-visible {
+    transition: none;
+    transform: none;
+  }
+}

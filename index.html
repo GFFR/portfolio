@@ -26,8 +26,8 @@
 <link rel="stylesheet" href="css/components/cases.css?v=6.3.4" />
 <link rel="stylesheet" href="css/components/toolkit.css?v=6.3.4" />
 <link rel="stylesheet" href="css/components/brands-edu.css?v=6.3.4" />
-<link rel="stylesheet" href="css/components/gram-chat.css?v=6.4.0" />
-<link rel="stylesheet" href="css/components/chat-dock.css?v=6.4.0" />
+<link rel="stylesheet" href="css/components/gram-chat.css?v=6.5.0" />
+<link rel="stylesheet" href="css/components/gram-chat-widget.css?v=6.5.0" />
 <link rel="stylesheet" href="css/components/footer-dock.css?v=6.4.0" />
 <link rel="stylesheet" href="css/utilities.css?v=6.3.4" />
 <link rel="stylesheet" href="css/print.css?v=6.3.4" />
@@ -650,11 +650,11 @@
       · <a href="https://goncalofframalho.com">goncalofframalho.com</a>
     </p>
 
+    <div id="gram-chat-inline-slot" class="gram-chat-slot">
     <div class="gram-chat-host reveal" id="gram-chat-host">
       <div class="gram-chat" id="gram-chat-el">
         <div class="gram-chat-head">
           <div class="gram-chat-head-info">
-            <span class="gram-chat-avatar" aria-hidden="true">g</span>
             <div class="gram-chat-head-text">
               <span class="gram-chat-head-title">gram</span>
               <span class="gram-chat-head-sub">Gonçalo's AI assistant · online</span>
@@ -669,12 +669,26 @@
                 <path d="M5 1.5H1.5V5M12.5 5V1.5H9M9 12.5H12.5V9M1.5 9V12.5H5" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </button>
+            <button type="button" id="gram-chat-close-btn" class="gram-chat-close-btn" aria-label="Close chat" title="Close">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M3.5 3.5l7 7M10.5 3.5l-7 7" stroke="currentColor" stroke-width="1.25" stroke-linecap="round"/>
+              </svg>
+            </button>
           </div>
         </div>
         <div class="gram-chat-messages" id="gram-chat-messages" aria-live="polite" aria-relevant="additions">
-          <p class="gram-chat-empty" id="gram-chat-empty">Ask gram about Gonçalo's career, case studies, or how to get in touch.</p>
+          <div class="gram-chat-empty" id="gram-chat-empty">
+            <p class="gram-chat-empty-lead">Ask gram about Gonçalo's work, experience, or availability.</p>
+            <ul class="gram-chat-suggestions" role="list" aria-label="Suggested questions">
+              <li><button type="button" class="gram-chat-suggest" data-ask="What's Gonçalo's email?">What's Gonçalo's email?</button></li>
+              <li><button type="button" class="gram-chat-suggest" data-ask="I'd like to see his LinkedIn">I'd like to see his LinkedIn</button></li>
+              <li><button type="button" class="gram-chat-suggest" data-ask="Is he available for advisory work?">Is he available for advisory work?</button></li>
+              <li><button type="button" class="gram-chat-suggest" data-ask="Tell me about the Brixel platform">Tell me about the Brixel platform</button></li>
+              <li><button type="button" class="gram-chat-suggest" data-ask="What's his experience with AI transformation?">What's his experience with AI transformation?</button></li>
+            </ul>
+          </div>
         </div>
-        <form id="gram-chat-form" class="gram-chat-form" autocomplete="off" autocapitalize="off" spellcheck="false">
+        <form id="gram-chat-form" class="gram-chat-form" autocomplete="off" autocapitalize="off" spellcheck="false" data-1p-ignore data-lpignore="true">
           <div class="gram-chat-quick" id="gram-chat-quick" role="group" aria-label="Quick questions">
             <button type="button" class="gram-chat-chip" data-ask="What's Gonçalo's email?">Email</button>
             <button type="button" class="gram-chat-chip" data-ask="I'd like to see his LinkedIn">LinkedIn</button>
@@ -683,22 +697,31 @@
             <input
               id="gram-chat-input"
               class="gram-chat-input"
-              name="gram-message"
-              type="text"
+              type="search"
+              role="searchbox"
               aria-label="Message for gram"
+              aria-autocomplete="none"
               placeholder="Ask for Gonçalo's email"
               autocomplete="off"
               autocorrect="off"
               autocapitalize="off"
               spellcheck="false"
-              data-lpignore="true"
+              enterkeyhint="send"
+              inputmode="text"
+              readonly
               data-1p-ignore
+              data-1password-ignore
+              data-lpignore="true"
+              data-bwignore
+              data-dashlane-ignore
+              data-protonpass-ignore
               data-form-type="other"
             />
             <button type="submit" class="gram-chat-send" aria-label="Send message">↑</button>
           </div>
         </form>
       </div>
+    </div>
     </div>
   </div>
 </section>
@@ -713,13 +736,17 @@
   </div>
 </footer>
 
-<a href="#chat" class="chat-dock" id="chat-dock" aria-label="Talk to gram — press space">
-  <span class="chat-dock-avatar" aria-hidden="true">g</span>
-  <span class="chat-dock-label">Press <kbd class="kbd-wide">space</kbd> · <span class="chat-dock-word">chat with gram</span></span>
-</a>
+<div id="gram-chat-layer" class="gram-chat-layer" aria-hidden="true">
+  <button type="button" class="gram-chat-backdrop" aria-label="Close chat" tabindex="-1"></button>
+  <div id="gram-chat-float-slot" class="gram-chat-float-slot"></div>
+</div>
 
-<script src="js/gram-chat.js?v=6.4.0" defer></script>
-<script src="js/chat-ui.js?v=6.4.0" defer></script>
-<script src="js/main.js?v=6.4.0" defer></script>
+<button type="button" class="chat-dock" id="chat-dock" aria-label="Talk to gram — press space">
+  <span class="chat-dock-label">Press <kbd class="kbd-wide">space</kbd> · <span class="chat-dock-word">chat with gram</span></span>
+</button>
+
+<script src="js/gram-chat.js?v=6.5.0" defer></script>
+<script src="js/chat-ui.js?v=6.5.0" defer></script>
+<script src="js/main.js?v=6.5.0" defer></script>
 </body>
 </html>

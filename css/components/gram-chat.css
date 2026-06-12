@@ -28,24 +28,6 @@
   min-width: 0;
 }
 
-.gram-chat-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: linear-gradient(145deg, color-mix(in srgb, var(--signal) 88%, #fff), var(--signal));
-  color: var(--ink);
-  font-family: var(--serif);
-  font-size: 17px;
-  font-weight: 600;
-  font-style: italic;
-  line-height: 1;
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--signal) 22%, transparent);
-}
-
 .gram-chat-head-text {
   display: flex;
   flex-direction: column;
@@ -76,6 +58,7 @@
   flex-shrink: 0;
 }
 
+.gram-chat-close-btn,
 .gram-chat-fs-btn {
   display: inline-flex;
   align-items: center;
@@ -92,15 +75,30 @@
   transition: color .15s ease, border-color .15s ease, background .15s ease;
 }
 
+.gram-chat-close-btn {
+  display: none;
+}
+
+.gram-chat-layer.is-open .gram-chat-close-btn,
+body.gram-chat-fullscreen-open .gram-chat-close-btn {
+  display: inline-flex;
+}
+
+.gram-chat-close-btn:hover,
 .gram-chat-fs-btn:hover {
   color: var(--signal);
   border-color: color-mix(in srgb, var(--signal) 35%, var(--line));
   background: color-mix(in srgb, var(--release-now-bg) 50%, var(--ink-2));
 }
 
+.gram-chat-close-btn:focus-visible,
 .gram-chat-fs-btn:focus-visible {
   outline: 2px solid var(--signal);
   outline-offset: 2px;
+}
+
+.gram-chat-slot:empty {
+  display: none;
 }
 
 .gram-chat-fs-icon-collapse { display: none; }
@@ -130,7 +128,7 @@
 
 .gram-chat-empty {
   margin: auto 0;
-  padding: 12px 4px;
+  padding: 20px 8px;
   text-align: center;
   color: var(--mute);
   font-size: 14px;
@@ -138,6 +136,52 @@
 }
 
 .gram-chat-empty[hidden] { display: none !important; }
+
+.gram-chat-empty-lead {
+  margin: 0 0 16px;
+  max-width: 28ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.gram-chat-suggestions {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.gram-chat-suggest {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--signal);
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: center;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: color-mix(in srgb, var(--signal) 40%, transparent);
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+
+.gram-chat-suggest:hover {
+  color: var(--text-strong);
+  text-decoration-color: var(--text-strong);
+}
+
+.gram-chat-suggest:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
 
 /* —— Messages —— */
 .gram-chat-msg {
@@ -354,6 +398,23 @@
   opacity: 0.85;
 }
 
+/* Hide browser / extension autofill affordances */
+.gram-chat-input::-webkit-search-decoration,
+.gram-chat-input::-webkit-search-cancel-button,
+.gram-chat-input::-webkit-search-results-button,
+.gram-chat-input::-webkit-search-results-decoration,
+.gram-chat-input::-webkit-contacts-auto-fill-button,
+.gram-chat-input::-webkit-credentials-auto-fill-button {
+  display: none !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.gram-chat-input[type="search"] {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 .gram-chat-send {
   display: inline-flex;
   align-items: center;
@@ -392,7 +453,8 @@ body.gram-chat-fullscreen-open .halo {
   pointer-events: none;
 }
 
-body.gram-chat-fullscreen-open .chat-dock {
+body.gram-chat-fullscreen-open .chat-dock,
+body.gram-chat-float-open .chat-dock {
   opacity: 0;
   pointer-events: none;
   transform: translateY(12px);
