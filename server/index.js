@@ -73,6 +73,6 @@ app.listen(PORT, () => {
     console.warn('OPENROUTER_API_KEY not set — chat disabled, static site only');
   }
   if (adminEnabled()) {
-    console.log('Admin logs at /admin/logs');
+    console.log('Admin at /admin/logs · /admin/leads');
   }
 });

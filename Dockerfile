@@ -7,7 +7,7 @@ RUN npm ci --omit=dev 2>/dev/null || npm install --omit=dev
 
 COPY . .
 
-RUN mkdir -p data persistent && chown -R node:node /app
+RUN mkdir -p data/chats data/leads persistent && chown -R node:node /app
 USER node
 
 ENV NODE_ENV=production

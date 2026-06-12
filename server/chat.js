@@ -1,7 +1,9 @@
 const { buildSystemPrompt } = require('./prompts');
 const { isBudgetExhausted, recordUsage } = require('./budget');
-const { logExchange } = require('./chat-log');
+const { logExchange, readSession, getMessagesForModel } = require('./chat-log');
 const { resolveSessionId } = require('./session-id');
+const { emptyLead, extractLead, isLeadQualified, markNotified } = require('./leads');
+const { notifyLead } = require('./notify');
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const MODEL = process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flash';
@@ -30,6 +32,36 @@ function sseWrite(res, event, data) {
   res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
 }
 
+async function processLeadAfterReply({ sessionId, lang, question, answer }) {
+  const session = readSession(sessionId);
+  if (!session) return emptyLead();
+
+  const messages = [
+    ...(session.messages || []),
+    { role: 'user', content: question },
+    { role: 'assistant', content: answer },
+  ];
+
+  const currentLead = session.lead || emptyLead();
+  const updatedLead = await extractLead({
+    messages,
+    currentLead,
+    lang,
+  });
+
+  if (!isLeadQualified(updatedLead) || updatedLead.notifiedAt) {
+    return updatedLead;
+  }
+
+  const result = await notifyLead({ sessionId, lead: updatedLead });
+  if (result.ok) {
+    return markNotified(sessionId);
+  }
+
+  updatedLead.notifyError = result.error || 'send_failed';
+  return updatedLead;
+}
+
 async function streamChat(req, res) {
   const apiKey = process.env.OPENROUTER_API_KEY;
   if (!apiKey) {
@@ -51,6 +83,8 @@ async function streamChat(req, res) {
 
   const lang = clientLang === 'pt' || clientLang === 'en' ? clientLang : detectLang(question);
   const chatSessionId = resolveSessionId(req, res, sessionId);
+  const existingSession = readSession(chatSessionId);
+  const leadState = existingSession?.lead || emptyLead();
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
@@ -68,13 +102,16 @@ async function streamChat(req, res) {
       question,
       answer,
       meta: { budgetExhausted: true },
+      lead: leadState,
     });
     res.end();
     return;
   }
 
+  const history = getMessagesForModel(existingSession);
   const messages = [
-    { role: 'system', content: buildSystemPrompt() },
+    { role: 'system', content: buildSystemPrompt(leadState) },
+    ...history,
     { role: 'user', content: question },
   ];
 
@@ -106,6 +143,7 @@ async function streamChat(req, res) {
       question,
       answer,
       meta: { error: 'upstream_unreachable' },
+      lead: leadState,
     });
     res.end();
     return;
@@ -125,6 +163,7 @@ async function streamChat(req, res) {
       question,
       answer,
       meta: { error: `openrouter_${upstream.status}` },
+      lead: leadState,
     });
     res.end();
     return;
@@ -178,12 +217,26 @@ async function streamChat(req, res) {
       question,
       answer: fullAnswer || answer,
       meta: { error: 'stream_interrupted', partial: Boolean(fullAnswer) },
+      lead: leadState,
     });
     res.end();
     return;
   }
 
   if (usage) recordUsage(usage);
+
+  let finalLead = leadState;
+  try {
+    finalLead = await processLeadAfterReply({
+      sessionId: chatSessionId,
+      lang,
+      question,
+      answer: fullAnswer,
+    });
+  } catch (err) {
+    console.error('[chat] lead processing error', err);
+  }
+
   logExchange({
     sessionId: chatSessionId,
     ip: req.ip,
@@ -191,8 +244,16 @@ async function streamChat(req, res) {
     question,
     answer: fullAnswer,
     meta: { usage: usage || null },
+    lead: finalLead,
   });
-  sseWrite(res, 'done', { usage: usage || null });
+
+  sseWrite(res, 'done', {
+    usage: usage || null,
+    lead: finalLead?.status && finalLead.status !== 'none' ? {
+      status: finalLead.status,
+      intent: finalLead.intent,
+    } : null,
+  });
   res.end();
 }
 

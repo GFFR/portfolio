@@ -182,11 +182,68 @@
       font-family: var(--mono);
       font-size: 12px;
     }
+    .nav {
+      display: flex;
+      gap: 12px;
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+    .nav a {
+      color: var(--mute);
+      text-decoration: none;
+    }
+    .nav a:hover, .nav a.is-active { color: var(--accent); }
+    .badge-lead {
+      display: inline-block;
+      margin-left: 6px;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      background: #2a2a1a;
+      color: var(--accent);
+    }
+    .lead-panel {
+      margin-bottom: 20px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #1a1a22;
+      font-size: 13px;
+    }
+    .lead-panel h3 {
+      margin: 0 0 8px;
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .lead-panel dl {
+      margin: 0;
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 4px 12px;
+      font-size: 12px;
+    }
+    .lead-panel dt {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--mute);
+      text-transform: uppercase;
+    }
+    .lead-panel dd { margin: 0; }
   </style>
 </head>
 <body>
   <header>
     <h1><span>gram</span> · chat logs</h1>
+    <nav class="nav">
+      <a href="/admin/leads">leads</a>
+      <a href="/admin/logs" class="is-active">logs</a>
+    </nav>
     <div class="meta" id="summary">loading…</div>
   </header>
   <div id="error" class="error-banner" hidden></div>
@@ -241,7 +298,7 @@
         <button type="button" class="session${s.sessionId === activeId ? ' is-active' : ''}" data-id="${esc(s.sessionId)}">
           <div class="session-time">${esc(fmt(s.updatedAt))}</div>
           <div class="session-preview">${esc(s.preview || '(empty)')}</div>
-          <div class="session-sub">${s.exchanges} exchange${s.exchanges === 1 ? '' : 's'}${s.ip ? ` · ${esc(s.ip)}` : ''}</div>
+          <div class="session-sub">${s.exchanges} exchange${s.exchanges === 1 ? '' : 's'}${s.ip ? ` · ${esc(s.ip)}` : ''}${s.lead?.intentLabel ? `<span class="badge-lead">${esc(s.lead.intentLabel)}</span>` : ''}</div>
         </button>
       `).join('');
 
@@ -260,6 +317,24 @@
       }
       pairs.reverse();
 
+      const lead = session.lead;
+      const lf = lead?.fields || {};
+      const leadPanel = lead?.intent ? `
+        <div class="lead-panel">
+          <h3>Lead · ${esc(lead.intentLabel || lead.intent)}${lead.notifiedAt ? ' · notified' : ''}</h3>
+          ${lead.summary ? `<p style="margin:0 0 10px">${esc(lead.summary)}</p>` : ''}
+          <dl>
+            ${lf.name ? `<dt>name</dt><dd>${esc(lf.name)}</dd>` : ''}
+            ${lf.email ? `<dt>email</dt><dd>${esc(lf.email)}</dd>` : ''}
+            ${lf.linkedin ? `<dt>linkedin</dt><dd>${esc(lf.linkedin)}</dd>` : ''}
+            ${lf.phone ? `<dt>phone</dt><dd>${esc(lf.phone)}</dd>` : ''}
+            ${lf.company ? `<dt>company</dt><dd>${esc(lf.company)}</dd>` : ''}
+            ${lf.role ? `<dt>role</dt><dd>${esc(lf.role)}</dd>` : ''}
+            ${lead.intentDetail ? `<dt>detail</dt><dd>${esc(lead.intentDetail)}</dd>` : ''}
+          </dl>
+        </div>
+      ` : '';
+
       detailEl.innerHTML = `
         <div class="detail-head">
           <h2>${esc(session.sessionId)}</h2>
@@ -270,6 +345,7 @@
             <span>${pairs.length} exchange${pairs.length === 1 ? '' : 's'}</span>
           </div>
         </div>
+        ${leadPanel}
         ${pairs.map(({ user, gram }) => `
           <div class="exchange">
             <div class="msg user">
