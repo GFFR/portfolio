@@ -1,10 +1,11 @@
-const { buildSystemPrompt } = require('./prompts');
+const { buildSystemPrompt, buildGreetingPrompt } = require('./prompts');
 const { pickGreeting } = require('./greetings');
 const { isBudgetExhausted, recordUsage } = require('./budget');
 const {
   logExchange,
   logGreeting,
   hasAssistantMessages,
+  lastAssistantMessage,
   readSession,
   getMessagesForModel,
 } = require('./chat-log');
@@ -268,7 +269,49 @@ async function streamChat(req, res) {
   });
 }
 
+async function streamUpstreamToClient(upstream, res) {
+  const reader = upstream.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let usage = null;
+  let fullAnswer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || '';
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed.startsWith('data:')) continue;
+      const payload = trimmed.slice(5).trim();
+      if (payload === '[DONE]') continue;
+
+      let parsed;
+      try {
+        parsed = JSON.parse(payload);
+      } catch {
+        continue;
+      }
+
+      if (parsed.usage) usage = parsed.usage;
+
+      const delta = parsed.choices?.[0]?.delta?.content;
+      if (delta) {
+        fullAnswer += delta;
+        sseWrite(res, 'token', { text: delta });
+      }
+    }
+  }
+
+  return { fullAnswer, usage };
+}
+
 async function streamGreeting(req, res) {
+  const apiKey = process.env.OPENROUTER_API_KEY;
   const { lang: clientLang, sessionId } = req.body || {};
   const lang = clientLang === 'pt' || clientLang === 'en' ? clientLang : 'en';
   const chatSessionId = resolveSessionId(req, res, sessionId);
@@ -277,20 +320,81 @@ async function streamGreeting(req, res) {
 
   beginSse(res);
 
-  const answer = isBudgetExhausted()
-    ? holidayMessage(lang)
-    : pickGreeting(lang, isReturning, chatSessionId);
+  const finishGreeting = (answer, meta = {}, alreadyStreamed = false) => {
+    const text = (answer || '').trim() || pickGreeting(lang, isReturning, chatSessionId);
+    if (!alreadyStreamed) sseWrite(res, 'token', { text });
+    logGreeting({
+      sessionId: chatSessionId,
+      ip: req.ip,
+      lang,
+      answer: text,
+      meta: { returning: isReturning, ...meta },
+    });
+    sseWrite(res, 'done', { greeting: true, returning: isReturning });
+    res.end();
+  };
 
-  sseWrite(res, 'token', { text: answer });
-  logGreeting({
-    sessionId: chatSessionId,
-    ip: req.ip,
+  if (!apiKey || isBudgetExhausted()) {
+    finishGreeting(
+      isBudgetExhausted() ? holidayMessage(lang) : pickGreeting(lang, isReturning, chatSessionId),
+      { fallback: true, budgetExhausted: isBudgetExhausted() },
+    );
+    return;
+  }
+
+  const greetingPrompt = buildGreetingPrompt({
+    isReturning,
     lang,
-    answer,
-    meta: { instant: true, returning: isReturning, budgetExhausted: isBudgetExhausted() },
+    lastAssistant: lastAssistantMessage(existingSession),
   });
-  sseWrite(res, 'done', { greeting: true, returning: isReturning });
-  res.end();
+  const messages = [
+    { role: 'system', content: greetingPrompt },
+    { role: 'user', content: 'Open chat with your greeting.' },
+  ];
+
+  let upstream;
+  try {
+    upstream = await fetch(OPENROUTER_URL, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'HTTP-Referer': SITE_URL,
+        'X-Title': SITE_TITLE,
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        messages,
+        stream: true,
+        max_tokens: parseInt(process.env.GREETING_MAX_TOKENS || '180', 10),
+        temperature: parseFloat(process.env.GREETING_TEMPERATURE || '0.9', 10),
+      }),
+    });
+  } catch (err) {
+    finishGreeting(pickGreeting(lang, isReturning, chatSessionId), { error: 'upstream_unreachable', fallback: true });
+    return;
+  }
+
+  if (!upstream.ok) {
+    console.error('[chat] greeting OpenRouter error', upstream.status);
+    finishGreeting(pickGreeting(lang, isReturning, chatSessionId), { error: `openrouter_${upstream.status}`, fallback: true });
+    return;
+  }
+
+  let fullAnswer = '';
+  let usage = null;
+  try {
+    ({ fullAnswer, usage } = await streamUpstreamToClient(upstream, res));
+  } catch (err) {
+    console.error('[chat] greeting stream error', err);
+    if (!fullAnswer.trim()) {
+      finishGreeting(pickGreeting(lang, isReturning, chatSessionId), { error: 'stream_interrupted', fallback: true });
+      return;
+    }
+  }
+
+  if (usage) recordUsage(usage);
+  finishGreeting(fullAnswer, { usage: usage || null }, true);
 }
 
 module.exports = { streamChat, streamGreeting, detectLang, holidayMessage };

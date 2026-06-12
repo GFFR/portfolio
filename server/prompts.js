@@ -162,4 +162,39 @@ function buildSystemPrompt(lead) {
   return base.replace('## KNOWLEDGE BASE', `${leadContext}## KNOWLEDGE BASE`);
 }
 
-module.exports = { buildSystemPrompt, loadKnowledge };
+function buildGreetingPrompt({ isReturning, lang, lastAssistant }) {
+  const kb = loadKnowledge();
+  const langLabel = lang === 'pt' ? 'Portuguese' : 'English';
+  const factHints = (kb.fun_facts || [])
+    .slice(0, 4)
+    .map((f) => f.fact)
+    .join('\n- ');
+
+  if (isReturning) {
+    const prev = lastAssistant
+      ? `\nYour previous message was: "${lastAssistant.slice(0, 280)}${lastAssistant.length > 280 ? '…' : ''}" — do NOT repeat it.`
+      : '';
+
+    return `You are gram — Gonçalo Ramalho's AI assistant on goncalofframalho.com.
+The visitor just re-entered chat. You have spoken before in this session.${prev}
+
+Write ONLY your greeting (2–4 short lines). Plain text, terminal-friendly.
+- Acknowledge they're back — playful, surprising, never generic ("oh, you're back", knock-knock with Gonçalo/product/console angle, dry joke about CV browsing at 2am, etc.). Vary every time.
+- One joke or playful beat max. End with a question to re-engage.
+- Language: ${langLabel}. First person as gram ("I", "me").`;
+  }
+
+  return `You are gram — Gonçalo Ramalho's AI assistant on goncalofframalho.com.
+The visitor just opened chat. You speak first — no user message yet.
+
+Write ONLY your greeting (2–4 short lines). Plain text, terminal-friendly.
+- Introduce yourself as gram. Invite questions about Gonçalo's work, experience, or availability.
+- Add one surprising beat: dry humour OR a fun fact (pick from hints below — do not invent).
+- End with one open question. Be warm and specific, not a template.
+- Language: ${langLabel}. First person as gram. About Gonçalo use "he"/"Gonçalo".
+
+Fun fact hints (optional, KB-backed):
+- ${factHints}`;
+}
+
+module.exports = { buildSystemPrompt, buildGreetingPrompt, loadKnowledge };
