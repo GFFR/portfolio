@@ -8,6 +8,11 @@
   function persistSessionId(id) {
     sessionId = id;
     try {
+      localStorage.setItem(SESSION_KEY, id);
+    } catch (_) {
+      /* private browsing */
+    }
+    try {
       sessionStorage.setItem(SESSION_KEY, id);
     } catch (_) {
       /* in-memory fallback */
@@ -17,24 +22,32 @@
   function loadSessionId() {
     if (sessionId) return sessionId;
     try {
-      const stored = sessionStorage.getItem(SESSION_KEY);
+      const stored = localStorage.getItem(SESSION_KEY);
       if (stored) {
         sessionId = stored;
         return sessionId;
       }
     } catch (_) {
-      /* sessionStorage blocked */
+      /* storage blocked */
+    }
+    try {
+      const stored = sessionStorage.getItem(SESSION_KEY);
+      if (stored) {
+        sessionId = stored;
+        persistSessionId(stored);
+        return sessionId;
+      }
+    } catch (_) {
+      /* storage blocked */
     }
     return null;
   }
 
-  function beginSession() {
+  function getSessionId() {
+    const existing = loadSessionId();
+    if (existing) return existing;
     persistSessionId(crypto.randomUUID());
     return sessionId;
-  }
-
-  function getSessionId() {
-    return loadSessionId() || beginSession();
   }
 
   function isAskInput(raw) {
@@ -199,6 +212,6 @@
     isAskInput,
     parseAskInput,
     ask,
-    beginSession,
+    getSessionId,
   };
 })();

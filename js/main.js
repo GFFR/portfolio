@@ -207,7 +207,6 @@ const chatHintEl = document.getElementById('console-chat-hint');
 
 function enterChatMode(skipWelcome) {
   if (chatModeActive) return;
-  if (window.ConsoleChat?.beginSession) ConsoleChat.beginSession();
   chatModeActive = true;
   form?.classList.add('is-chat-mode');
   if (promptEl) promptEl.textContent = 'gram>';
