@@ -11,7 +11,7 @@ function ensureDir() {
 
 function normalizeSessionId(id) {
   if (typeof id === 'string' && SESSION_ID_RE.test(id)) return id;
-  return crypto.randomUUID();
+  return null;
 }
 
 function sessionPath(sessionId) {
@@ -41,6 +41,10 @@ function preview(text, max = 120) {
 
 function logExchange({ sessionId, ip, lang, question, answer, meta = {} }) {
   const id = normalizeSessionId(sessionId);
+  if (!id) {
+    console.warn('[chat] skipped log — missing session id');
+    return null;
+  }
   const now = new Date().toISOString();
   const existing = readSession(id);
 

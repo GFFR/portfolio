@@ -3,18 +3,38 @@
   const ASK_PREFIX = 'ask ';
   const SESSION_KEY = 'gram-chat-session';
   let activeController = null;
+  let sessionId = null;
+
+  function persistSessionId(id) {
+    sessionId = id;
+    try {
+      sessionStorage.setItem(SESSION_KEY, id);
+    } catch (_) {
+      /* in-memory fallback */
+    }
+  }
+
+  function loadSessionId() {
+    if (sessionId) return sessionId;
+    try {
+      const stored = sessionStorage.getItem(SESSION_KEY);
+      if (stored) {
+        sessionId = stored;
+        return sessionId;
+      }
+    } catch (_) {
+      /* sessionStorage blocked */
+    }
+    return null;
+  }
+
+  function beginSession() {
+    persistSessionId(crypto.randomUUID());
+    return sessionId;
+  }
 
   function getSessionId() {
-    try {
-      let id = sessionStorage.getItem(SESSION_KEY);
-      if (!id) {
-        id = crypto.randomUUID();
-        sessionStorage.setItem(SESSION_KEY, id);
-      }
-      return id;
-    } catch {
-      return crypto.randomUUID();
-    }
+    return loadSessionId() || beginSession();
   }
 
   function isAskInput(raw) {
@@ -179,5 +199,6 @@
     isAskInput,
     parseAskInput,
     ask,
+    beginSession,
   };
 })();

@@ -1,6 +1,7 @@
 const { buildSystemPrompt } = require('./prompts');
 const { isBudgetExhausted, recordUsage } = require('./budget');
 const { logExchange } = require('./chat-log');
+const { resolveSessionId } = require('./session-id');
 
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const MODEL = process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flash';
@@ -49,6 +50,7 @@ async function streamChat(req, res) {
   }
 
   const lang = clientLang === 'pt' || clientLang === 'en' ? clientLang : detectLang(question);
+  const chatSessionId = resolveSessionId(req, res, sessionId);
 
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
@@ -60,7 +62,7 @@ async function streamChat(req, res) {
     sseWrite(res, 'token', { text: answer });
     sseWrite(res, 'done', { budgetExhausted: true });
     logExchange({
-      sessionId,
+      sessionId: chatSessionId,
       ip: req.ip,
       lang,
       question,
@@ -98,7 +100,7 @@ async function streamChat(req, res) {
     const answer = 'Could not reach the model. Try again or use `email`.';
     sseWrite(res, 'error', { message: answer });
     logExchange({
-      sessionId,
+      sessionId: chatSessionId,
       ip: req.ip,
       lang,
       question,
@@ -117,7 +119,7 @@ async function streamChat(req, res) {
       : 'Something went wrong. Try again or use `email`.';
     sseWrite(res, 'error', { message: answer });
     logExchange({
-      sessionId,
+      sessionId: chatSessionId,
       ip: req.ip,
       lang,
       question,
@@ -170,7 +172,7 @@ async function streamChat(req, res) {
     const answer = 'Stream interrupted.';
     sseWrite(res, 'error', { message: answer });
     logExchange({
-      sessionId,
+      sessionId: chatSessionId,
       ip: req.ip,
       lang,
       question,
@@ -183,7 +185,7 @@ async function streamChat(req, res) {
 
   if (usage) recordUsage(usage);
   logExchange({
-    sessionId,
+    sessionId: chatSessionId,
     ip: req.ip,
     lang,
     question,

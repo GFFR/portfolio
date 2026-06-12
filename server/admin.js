@@ -1,6 +1,7 @@
 const path = require('path');
 const express = require('express');
-const { listSessions, readSession, normalizeSessionId } = require('./chat-log');
+const { listSessions, readSession } = require('./chat-log');
+const { isValidSessionId } = require('./session-id');
 const { setNoCache } = require('./no-cache');
 
 const VIEWS = path.join(__dirname, 'views');
@@ -20,8 +21,8 @@ apiRouter.get('/sessions', (_req, res) => {
 
 apiRouter.get('/sessions/:sessionId', (req, res) => {
   setNoCache(res);
-  const sessionId = normalizeSessionId(req.params.sessionId);
-  if (sessionId !== req.params.sessionId) {
+  const sessionId = req.params.sessionId;
+  if (!isValidSessionId(sessionId)) {
     res.status(400).json({ error: 'Invalid session id' });
     return;
   }
