@@ -140,7 +140,7 @@ function echo(cmd) {
 
 const commands = {
   help() {
-    print('available · <span class="console-accent">help · whoami · status · email · linkedin · cv · github · site · skills · stack · brands · book · chat · fullscreen · clear · 42</span>');
+    print('available · <span class="console-accent">help · whoami · status · email · linkedin · cv · github · site · skills · stack · brands · book · chat · fullscreen · clear</span>');
     print('gram · type <span class="console-accent">chat</span> or <span class="console-accent">ask</span> to talk to gram — <span class="console-accent">esc</span> to exit chat mode');
     print('display · <span class="console-accent">fullscreen</span> or the ⛶ button in the header — <span class="console-accent">esc</span> to exit when not chatting');
   },
@@ -166,13 +166,10 @@ const commands = {
   brands() { print('Activate: Google · Schweppes · MTV · Nike · VW · Pandora. Platforms: Brixel · Gridwork · Avila Spaces. Plus Swiss banking &amp; insurance partners under NDA.'); },
   clear() { out.innerHTML = ''; },
   fullscreen() { toggleFullscreen(); },
-  fs() { toggleFullscreen(); },
-  '42'() { print('the answer · also: a good roadmap fits on one page.'); }
+  fs() { toggleFullscreen(); }
 };
 
 const COMMAND_NAMES = Object.keys(commands).sort(function (a, b) {
-  if (a === '42') return 1;
-  if (b === '42') return -1;
   return a.localeCompare(b);
 });
 

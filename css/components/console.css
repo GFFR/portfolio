@@ -90,82 +90,107 @@
 }
 .console-body.has-chat-thread {
   padding-bottom: 12px;
+  display: flex;
+  flex-direction: column;
 }
 .console-line { display: flex; gap: 10px; align-items: flex-start; }
+.console-line:not(.chat) { width: 100%; }
 .console-line .prompt { color: var(--signal); flex-shrink: 0; }
 .console-line .text { color: var(--text); }
 .console-line .out { color: var(--text); padding-left: 20px; }
 .console-line.system .text { color: var(--mute); font-style: italic; }
 .console-line.warn .out { color: var(--warn); }
 
-/* —— Chat thread —— */
+/* —— Chat thread (messaging layout) —— */
 .console-line.chat {
-  align-items: flex-start;
-  gap: 12px;
-  margin-top: 8px;
-  padding: 10px 12px 10px 10px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--ink-3) 55%, transparent);
-  border: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
-}
-.console-line.chat + .console-line.chat {
-  margin-top: 6px;
+  flex-direction: column;
+  gap: 4px;
+  max-width: min(86%, 480px);
+  margin-top: 10px;
+  padding: 0;
+  border: none;
+  background: none;
 }
 .console-line.chat.user {
-  border-left: 3px solid var(--line-2);
+  align-self: flex-end;
+  align-items: flex-end;
 }
 .console-line.chat.gram,
 .console-line.chat:not(.user) {
-  border-left: 3px solid var(--signal);
+  align-self: flex-start;
+  align-items: flex-start;
 }
-.console-line.chat.is-streaming {
-  background: color-mix(in srgb, var(--release-now-bg) 70%, var(--ink-2));
-  border-color: color-mix(in srgb, var(--signal) 22%, var(--line));
+.console-line.chat.user + .console-line.chat.user,
+.console-line.chat.gram + .console-line.chat.gram,
+.console-line.chat:not(.user) + .console-line.chat:not(.user) {
+  margin-top: 4px;
+}
+.console-line.chat.user + .console-line.chat.gram,
+.console-line.chat.gram + .console-line.chat.user,
+.console-line.chat:not(.user) + .console-line.chat.user,
+.console-line.chat.user + .console-line.chat:not(.user) {
+  margin-top: 14px;
 }
 
 .chat-label {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 2.6em;
-  padding: 3px 9px;
-  border-radius: 5px;
+  display: block;
+  padding: 0 6px;
   font-size: 10px;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-transform: lowercase;
-  flex-shrink: 0;
-  margin-top: 1px;
-  line-height: 1.3;
+  line-height: 1.2;
+  color: var(--mute);
 }
 .chat-label-user {
-  color: var(--text-strong);
-  background: var(--chip-bg);
-  border: 1px solid var(--line);
+  text-align: right;
 }
 .chat-label-gram {
-  color: var(--signal);
-  background: var(--release-now-bg);
-  border: 1px solid var(--release-now-border);
+  color: color-mix(in srgb, var(--signal) 72%, var(--mute));
 }
 .console-line.chat.is-streaming .chat-label-gram::after {
   content: "";
   display: inline-block;
   width: 5px;
   height: 5px;
-  margin-left: 6px;
+  margin-left: 5px;
+  vertical-align: 0.05em;
   border-radius: 50%;
   background: var(--signal);
   animation: chat-pulse 1.1s ease-in-out infinite;
 }
 
 .chat-body {
-  flex: 1;
+  display: block;
   min-width: 0;
-  color: var(--text);
+  padding: 10px 14px;
+  border-radius: 14px;
+  line-height: 1.55;
   white-space: pre-wrap;
   word-break: break-word;
 }
+.console-line.chat.user .chat-body {
+  color: var(--text-strong);
+  background: var(--ink-3);
+  border: 1px solid var(--line);
+  border-bottom-right-radius: 4px;
+}
+.console-line.chat.gram .chat-body,
+.console-line.chat:not(.user) .chat-body {
+  color: var(--text);
+  background: var(--release-now-bg);
+  border: 1px solid var(--release-now-border);
+  border-bottom-left-radius: 4px;
+}
+.console-line.chat.is-streaming .chat-body {
+  border-color: color-mix(in srgb, var(--signal) 28%, var(--line));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--signal) 8%, transparent);
+}
+.console-line.chat.warn .chat-body {
+  border-color: color-mix(in srgb, var(--warn) 35%, var(--line));
+  background: color-mix(in srgb, var(--warn) 6%, var(--ink-3));
+}
+
 .console-line.chat .chat-out {
   color: inherit;
   padding-left: 0;
