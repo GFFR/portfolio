@@ -3,7 +3,7 @@ require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
 const express = require('express');
 const rateLimit = require('express-rate-limit');
-const { streamChat } = require('./chat');
+const { streamChat, streamGreeting } = require('./chat');
 const { getBudgetState } = require('./budget');
 const { adminAuth, adminEnabled } = require('./admin-auth');
 const { pageRouter, apiRouter } = require('./admin');
@@ -36,6 +36,14 @@ app.get('/api/health', (_req, res) => {
 app.post('/api/chat', chatLimiter, (req, res) => {
   streamChat(req, res).catch((err) => {
     console.error('[chat] unhandled', err);
+    if (!res.headersSent) res.status(500).json({ error: 'Internal error' });
+    else res.end();
+  });
+});
+
+app.post('/api/chat/greeting', chatLimiter, (req, res) => {
+  streamGreeting(req, res).catch((err) => {
+    console.error('[chat] greeting unhandled', err);
     if (!res.headersSent) res.status(500).json({ error: 'Internal error' });
     else res.end();
   });

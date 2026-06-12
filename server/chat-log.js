@@ -56,6 +56,55 @@ function getMessagesForModel(session) {
   return modelMessages.slice(-MAX_HISTORY_MESSAGES);
 }
 
+function hasAssistantMessages(session) {
+  return (session?.messages || []).some((m) => m.role === 'assistant' && m.content);
+}
+
+function lastAssistantMessage(session) {
+  const msgs = session?.messages || [];
+  for (let i = msgs.length - 1; i >= 0; i--) {
+    if (msgs[i].role === 'assistant' && msgs[i].content) return msgs[i].content;
+  }
+  return null;
+}
+
+function logGreeting({ sessionId, ip, lang, answer, meta = {} }) {
+  const id = normalizeSessionId(sessionId);
+  if (!id) {
+    console.warn('[chat] skipped greeting log — missing session id');
+    return null;
+  }
+  const now = new Date().toISOString();
+  const existing = readSession(id);
+
+  const session = existing || {
+    sessionId: id,
+    createdAt: now,
+    ip: ip || null,
+    messages: [],
+    lead: null,
+  };
+
+  session.updatedAt = now;
+  if (!existing && ip) session.ip = ip;
+
+  session.messages.push({
+    at: now,
+    role: 'assistant',
+    content: answer,
+    greeting: true,
+    lang: lang || null,
+    ...meta,
+  });
+
+  writeSessionData(session);
+
+  const tag = `[chat] ${id.slice(0, 8)}`;
+  console.log(`${tag} gram (greeting): ${preview(answer)}${meta.budgetExhausted ? ' (budget)' : ''}${meta.error ? ` (${meta.error})` : ''}`);
+
+  return id;
+}
+
 function logExchange({ sessionId, ip, lang, question, answer, meta = {}, lead = undefined }) {
   const id = normalizeSessionId(sessionId);
   if (!id) {
@@ -145,6 +194,9 @@ function listSessions() {
 
 module.exports = {
   logExchange,
+  logGreeting,
+  hasAssistantMessages,
+  lastAssistantMessage,
   normalizeSessionId,
   readSession,
   writeSessionData,

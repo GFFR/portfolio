@@ -108,15 +108,71 @@
     if (out) out.scrollTop = out.scrollHeight;
   }
 
-  async function ask(question, ctx) {
-    const { out, print } = ctx;
-    const q = (question || '').trim();
+  function parseSseError(res, errText) {
+    let message = 'Could not reach chat. Try `email`.';
+    const dataMatch = errText.match(/^data:\s*(.+)$/m);
+    if (dataMatch) {
+      try {
+        const parsed = JSON.parse(dataMatch[1]);
+        if (parsed.message) message = parsed.message;
+      } catch (_) { /* keep default */ }
+    } else {
+      try {
+        const parsed = JSON.parse(errText);
+        if (parsed.error) message = parsed.error;
+      } catch (_) { /* keep default */ }
+    }
+    return message;
+  }
 
-    if (!q) {
-      print('usage · type <span class="console-accent">chat</span> to enter chat mode, or <span class="console-accent">chat &lt;question&gt;</span> / <span class="console-accent">? &lt;question&gt;</span>', 'warn');
-      return;
+  async function consumeSseStream(res, outEl, line, out) {
+    let fullText = '';
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const chunks = buffer.split('\n\n');
+      buffer = chunks.pop() || '';
+
+      for (const chunk of chunks) {
+        const lines = chunk.split('\n');
+        let event = 'message';
+        let dataStr = '';
+
+        for (const ln of lines) {
+          if (ln.startsWith('event:')) event = ln.slice(6).trim();
+          else if (ln.startsWith('data:')) dataStr = ln.slice(5).trim();
+        }
+
+        if (!dataStr) continue;
+        let data;
+        try {
+          data = JSON.parse(dataStr);
+        } catch {
+          continue;
+        }
+
+        if (event === 'token' && data.text) {
+          fullText += data.text;
+          outEl.innerHTML = linkifyConsole(fullText);
+          scrollOut(out);
+        } else if (event === 'error') {
+          line.classList.add('warn');
+          outEl.innerHTML = escapeHtml(data.message || 'Error.');
+          scrollOut(out);
+        }
+      }
     }
 
+    return fullText;
+  }
+
+  async function streamFromEndpoint(endpoint, body, out) {
     if (activeController) activeController.abort();
 
     const outEl = createChatLine(out);
@@ -128,81 +184,28 @@
     const signal = activeController.signal;
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: q, lang: detectLang(q), sessionId: getSessionId() }),
+        body: JSON.stringify(body),
         signal,
       });
 
       if (!res.ok) {
         const errText = await res.text().catch(() => '');
-        let message = 'Could not reach chat. Try `email`.';
-        const dataMatch = errText.match(/^data:\s*(.+)$/m);
-        if (dataMatch) {
-          try {
-            const parsed = JSON.parse(dataMatch[1]);
-            if (parsed.message) message = parsed.message;
-          } catch (_) { /* keep default */ }
-        } else {
-          try {
-            const parsed = JSON.parse(errText);
-            if (parsed.error) message = parsed.error;
-          } catch (_) { /* keep default */ }
-        }
         line.classList.add('warn');
-        outEl.innerHTML = escapeHtml(message);
+        outEl.innerHTML = escapeHtml(parseSseError(res, errText));
         scrollOut(out);
-        return;
+        return '';
       }
 
-      const reader = res.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-
-        buffer += decoder.decode(value, { stream: true });
-        const chunks = buffer.split('\n\n');
-        buffer = chunks.pop() || '';
-
-        for (const chunk of chunks) {
-          const lines = chunk.split('\n');
-          let event = 'message';
-          let dataStr = '';
-
-          for (const ln of lines) {
-            if (ln.startsWith('event:')) event = ln.slice(6).trim();
-            else if (ln.startsWith('data:')) dataStr = ln.slice(5).trim();
-          }
-
-          if (!dataStr) continue;
-          let data;
-          try {
-            data = JSON.parse(dataStr);
-          } catch {
-            continue;
-          }
-
-          if (event === 'token' && data.text) {
-            fullText += data.text;
-            outEl.innerHTML = linkifyConsole(fullText);
-            scrollOut(out);
-          } else if (event === 'error') {
-            line.classList.add('warn');
-            outEl.innerHTML = escapeHtml(data.message || 'Error.');
-            scrollOut(out);
-          }
-        }
-      }
+      fullText = await consumeSseStream(res, outEl, line, out);
 
       if (!fullText) {
         outEl.innerHTML = '<span class="console-accent">…</span>';
       }
     } catch (err) {
-      if (err.name === 'AbortError') return;
+      if (err.name === 'AbortError') return '';
       line.classList.add('warn');
       outEl.textContent = 'Connection lost. Commands still work — try `email`.';
     } finally {
@@ -210,12 +213,37 @@
       activeController = null;
       scrollOut(out);
     }
+
+    return fullText;
+  }
+
+  async function greeting(ctx) {
+    const { out } = ctx;
+    const lang = (typeof navigator !== 'undefined' && navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en';
+    await streamFromEndpoint('/api/chat/greeting', { lang, sessionId: getSessionId() }, out);
+  }
+
+  async function ask(question, ctx) {
+    const { out, print } = ctx;
+    const q = (question || '').trim();
+
+    if (!q) {
+      print('usage · type <span class="console-accent">chat</span> to enter chat mode, or <span class="console-accent">chat &lt;question&gt;</span> / <span class="console-accent">? &lt;question&gt;</span>', 'warn');
+      return;
+    }
+
+    await streamFromEndpoint('/api/chat', {
+      message: q,
+      lang: detectLang(q),
+      sessionId: getSessionId(),
+    }, out);
   }
 
   window.ConsoleChat = {
     isAskInput,
     parseAskInput,
     ask,
+    greeting,
     getSessionId,
   };
 })();

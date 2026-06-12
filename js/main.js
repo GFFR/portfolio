@@ -211,11 +211,21 @@ function enterChatMode(skipWelcome) {
   if (chatHintEl) chatHintEl.hidden = false;
   hideSuggest();
   if (unknownEl) unknownEl.hidden = true;
-  if (!skipWelcome) {
-    printChatBanner('gram · Gonçalo\'s AI assistant — ask about his work, experience, or availability.');
-  }
   out?.classList.add('has-chat-thread');
-  scrollConsoleToEnd();
+  if (!skipWelcome) {
+    sendChatGreeting();
+  } else {
+    scrollConsoleToEnd();
+  }
+}
+
+function sendChatGreeting() {
+  if (window.ConsoleChat?.greeting) {
+    ConsoleChat.greeting({ out, print });
+  } else {
+    printChatBanner('gram · Gonçalo\'s AI assistant — ask about his work, experience, or availability.');
+    scrollConsoleToEnd();
+  }
 }
 
 function exitChatMode() {
