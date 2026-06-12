@@ -258,6 +258,7 @@
           pairs.push({ user: messages[i], gram: messages[i + 1]?.role === 'assistant' ? messages[i + 1] : null });
         }
       }
+      pairs.reverse();
 
       detailEl.innerHTML = `
         <div class="detail-head">
