@@ -108,7 +108,9 @@
     if (out) out.scrollTop = out.scrollHeight;
   }
 
-  function parseSseError(res, errText) {
+  const STREAM_TIMEOUT_MS = 45000;
+
+  function parseHttpError(errText) {
     let message = 'Could not reach chat. Try `email`.';
     const dataMatch = errText.match(/^data:\s*(.+)$/m);
     if (dataMatch) {
@@ -116,12 +118,14 @@
         const parsed = JSON.parse(dataMatch[1]);
         if (parsed.message) message = parsed.message;
       } catch (_) { /* keep default */ }
-    } else {
-      try {
-        const parsed = JSON.parse(errText);
-        if (parsed.error) message = parsed.error;
-      } catch (_) { /* keep default */ }
+      return message;
     }
+    try {
+      const parsed = JSON.parse(errText);
+      if (typeof parsed.error === 'string') message = parsed.error;
+      else if (parsed.message && typeof parsed.message === 'string') message = parsed.message;
+      else if (parsed.message?.error) message = parsed.message.error;
+    } catch (_) { /* keep default */ }
     return message;
   }
 
@@ -157,7 +161,7 @@
           continue;
         }
 
-        if (event === 'token' && data.text) {
+        if ((event === 'token' || event === 'message') && data.text) {
           fullText += data.text;
           outEl.innerHTML = linkifyConsole(fullText);
           scrollOut(out);
@@ -172,6 +176,12 @@
     return fullText;
   }
 
+  function removeEmptyGramLine(line, outEl, fullText) {
+    if (!line || fullText.trim()) return;
+    const empty = !outEl.textContent.trim() && !outEl.innerHTML.trim();
+    if (empty) line.remove();
+  }
+
   async function streamFromEndpoint(endpoint, body, out) {
     if (activeController) activeController.abort();
 
@@ -179,9 +189,14 @@
     const line = outEl.closest('.console-line');
     line.classList.add('is-streaming');
     let fullText = '';
+    let timedOut = false;
 
     activeController = new AbortController();
     const signal = activeController.signal;
+    const timeoutId = setTimeout(function () {
+      timedOut = true;
+      activeController?.abort();
+    }, STREAM_TIMEOUT_MS);
 
     try {
       const res = await fetch(endpoint, {
@@ -194,21 +209,31 @@
       if (!res.ok) {
         const errText = await res.text().catch(() => '');
         line.classList.add('warn');
-        outEl.innerHTML = escapeHtml(parseSseError(res, errText));
+        outEl.innerHTML = escapeHtml(parseHttpError(errText));
         scrollOut(out);
         return '';
       }
 
       fullText = await consumeSseStream(res, outEl, line, out);
 
-      if (!fullText) {
-        outEl.innerHTML = '<span class="console-accent">…</span>';
+      if (!fullText.trim()) {
+        line.classList.add('warn');
+        outEl.textContent = 'No response — try again or use `email`.';
       }
     } catch (err) {
-      if (err.name === 'AbortError') return '';
+      if (err.name === 'AbortError') {
+        if (timedOut && !fullText.trim()) {
+          line.classList.add('warn');
+          outEl.textContent = 'Taking too long — try again in a moment.';
+        } else {
+          removeEmptyGramLine(line, outEl, fullText);
+        }
+        return fullText;
+      }
       line.classList.add('warn');
       outEl.textContent = 'Connection lost. Commands still work — try `email`.';
     } finally {
+      clearTimeout(timeoutId);
       line?.classList.remove('is-streaming');
       activeController = null;
       scrollOut(out);

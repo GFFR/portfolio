@@ -5,6 +5,8 @@ const KB_PATH = process.env.KB_PATH || path.join(__dirname, '..', 'data', 'cv-kn
 
 let cachedKb = null;
 let cachedMtime = 0;
+let cachedBasePrompt = null;
+let cachedBasePromptMtime = 0;
 
 function loadKnowledge() {
   const stat = fs.statSync(KB_PATH);
@@ -98,13 +100,16 @@ ${examples}
 `;
 }
 
-function buildSystemPrompt(lead) {
-  const kb = loadKnowledge();
-  const { lead_capture: _lc, ...kbFacts } = kb;
+function buildBaseSystemPrompt(kb) {
+  const {
+    lead_capture: _lc,
+    fun_facts: _ff,
+    voice: _voice,
+    ...kbFacts
+  } = kb;
   const kbJson = JSON.stringify(kbFacts, null, 2);
   const engagementRules = buildEngagementRules(kb);
   const leadRules = buildLeadRules(kb);
-  const leadContext = formatLeadContext(lead);
 
   return `You are gram — Gonçalo Ramalho's AI assistant on his personal CV website (goncalofframalho.com).
 Your name is gram (always lowercase). Your role: help visitors learn about Gonçalo — his career, work, experience, skills, availability, and contact — using the KNOWLEDGE BASE below.
@@ -131,38 +136,30 @@ You are NOT Gonçalo. Never speak as him or claim his experience as your own.
 11. You may reference site sections conceptually (releases, case files, toolkit) but do not output raw URLs unless asked for contact links.
 ${engagementRules}
 ${leadRules}
-${leadContext}## KNOWLEDGE BASE
+## KNOWLEDGE BASE
 ${kbJson}`;
 }
 
-function buildGreetingPrompt({ isReturning, lang, lastAssistant }) {
+function buildSystemPrompt(lead) {
   const kb = loadKnowledge();
-  const langLabel = lang === 'pt' ? 'Portuguese' : 'English';
+  const leadContext = formatLeadContext(lead);
 
-  if (isReturning) {
-    const prev = lastAssistant
-      ? `\nYour previous message to them was: "${lastAssistant.slice(0, 280)}${lastAssistant.length > 280 ? '…' : ''}" — do NOT repeat it.`
-      : '';
-
-    return `You are gram — Gonçalo Ramalho's AI assistant on goncalofframalho.com.
-The visitor just re-entered chat. You have spoken to them before in this session.${prev}
-
-Write ONLY your greeting message (2–4 short lines). Plain text, terminal-friendly.
-- Acknowledge they're back — playful, not corporate ("oh, you're back", "knock knock", a light joke about the console, Gonçalo, roadmaps, or someone still browsing a CV at 2am — vary it).
-- A knock-knock joke is welcome if it fits naturally (Gonçalo/product/console themed). One joke max.
-- End with one question to re-engage them.
-- Language: ${langLabel}. First person as gram ("I", "me").`;
+  if (!leadContext) {
+    if (!cachedBasePrompt || cachedBasePromptMtime !== cachedMtime) {
+      cachedBasePrompt = buildBaseSystemPrompt(kb);
+      cachedBasePromptMtime = cachedMtime;
+    }
+    return cachedBasePrompt;
   }
 
-  return `You are gram — Gonçalo Ramalho's AI assistant on goncalofframalho.com.
-The visitor just entered chat for the first time. No user message yet — you speak first.
-
-Write ONLY your greeting message (2–4 short lines). Plain text, terminal-friendly.
-- Introduce yourself as gram, Gonçalo's AI assistant on this console.
-- Invite them to ask about his work, experience, or availability.
-- One light touch: a KB-backed fun fact about Gonçalo OR one dry product-leader joke — not both.
-- End with one open question (what brought them here, what they want to know, etc.).
-- Language: ${langLabel}. First person as gram ("I", "me"). About Gonçalo use "he"/"Gonçalo".`;
+  const base = (!cachedBasePrompt || cachedBasePromptMtime !== cachedMtime)
+    ? buildBaseSystemPrompt(kb)
+    : cachedBasePrompt;
+  if (!cachedBasePrompt || cachedBasePromptMtime !== cachedMtime) {
+    cachedBasePrompt = base;
+    cachedBasePromptMtime = cachedMtime;
+  }
+  return base.replace('## KNOWLEDGE BASE', `${leadContext}## KNOWLEDGE BASE`);
 }
 
-module.exports = { buildSystemPrompt, buildGreetingPrompt, loadKnowledge };
+module.exports = { buildSystemPrompt, loadKnowledge };

@@ -24,6 +24,14 @@ const chatLimiter = rateLimit({
   message: { error: 'Too many questions. Take a breath — commands still work.' },
 });
 
+const greetingLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: parseInt(process.env.GREETING_RATE_LIMIT_MAX || '60', 10),
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many chat opens. Wait a moment — commands still work.' },
+});
+
 app.get('/api/health', (_req, res) => {
   setNoCache(res);
   res.json({
@@ -41,7 +49,7 @@ app.post('/api/chat', chatLimiter, (req, res) => {
   });
 });
 
-app.post('/api/chat/greeting', chatLimiter, (req, res) => {
+app.post('/api/chat/greeting', greetingLimiter, (req, res) => {
   streamGreeting(req, res).catch((err) => {
     console.error('[chat] greeting unhandled', err);
     if (!res.headersSent) res.status(500).json({ error: 'Internal error' });
