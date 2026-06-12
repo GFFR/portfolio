@@ -98,8 +98,27 @@
     host.classList.toggle('is-float', slot === 'float');
   }
 
-  function setDockVisible(show) {
+  function isMobile() {
+    return MOBILE_MQ.matches;
+  }
+
+  function hasScrolledPastHeroOnMobile() {
+    if (!isMobile()) return true;
+    const scrollY = window.scrollY || document.documentElement.scrollTop;
+    const hero = document.getElementById('boot') || document.querySelector('.hero');
+    if (hero) {
+      const rect = hero.getBoundingClientRect();
+      return rect.bottom < window.innerHeight * 0.55;
+    }
+    return scrollY > Math.min(window.innerHeight * 0.4, 280);
+  }
+
+  function updateDockVisibility() {
     if (!dock) return;
+    const show = !sectionVisible
+      && !floatOpen
+      && !fullscreenActive
+      && hasScrolledPastHeroOnMobile();
     dock.classList.toggle('is-visible', show);
     document.body.classList.toggle('has-chat-dock', show);
   }
@@ -127,7 +146,7 @@
     layer.classList.add('is-open');
     layer.setAttribute('aria-hidden', 'false');
     document.body.classList.add('gram-chat-float-open');
-    setDockVisible(false);
+    updateDockVisibility();
     scrollToEnd();
     setTimeout(function () { input.focus({ preventScroll: true }); }, MOBILE_MQ.matches ? 120 : 80);
     ensureGreeting();
@@ -141,9 +160,7 @@
     layer.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('gram-chat-float-open');
 
-    if (!sectionVisible) {
-      setDockVisible(true);
-    }
+    updateDockVisibility();
   }
 
   function onSectionVisible(visible) {
@@ -153,14 +170,14 @@
       if (floatOpen) closeFloat();
       if (fullscreenActive) exitFullscreen();
       placeHost('inline');
-      setDockVisible(false);
+      updateDockVisibility();
       return;
     }
 
     if (!fullscreenActive) {
       placeHost('float');
     }
-    setDockVisible(!floatOpen);
+    updateDockVisibility();
   }
 
   function startPlaceholderRotation() {
@@ -341,14 +358,19 @@
     if (!sectionVisible) placeHost('inline');
   });
 
+  window.addEventListener('scroll', function () {
+    updateDockVisibility();
+  }, { passive: true });
+
+  MOBILE_MQ.addEventListener('change', updateDockVisibility);
+
   sectionVisible = isSectionInView();
   if (sectionVisible) {
     placeHost('inline');
-    setDockVisible(false);
   } else {
     placeHost('float');
-    setDockVisible(true);
   }
+  updateDockVisibility();
 
   if (location.hash === '#chat') {
     history.replaceState(null, '', window.location.pathname + window.location.search);
