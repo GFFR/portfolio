@@ -6,7 +6,7 @@ const { readSession, writeSessionData } = require('./chat-log');
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const EXTRACT_MODEL = process.env.LEAD_EXTRACT_MODEL || process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flash';
 const SITE_URL = process.env.SITE_URL || 'https://goncalofframalho.com';
-const SITE_TITLE = process.env.SITE_TITLE || 'Gonçalo Ramalho · Product Console';
+const SITE_TITLE = process.env.SITE_TITLE || 'Gonçalo Ramalho | Product & Innovation Leader';
 const LEADS_DIR = process.env.LEADS_DIR || path.join(__dirname, '..', 'data', 'leads');
 const INTENT_CONFIDENCE_MIN = parseFloat(process.env.LEAD_INTENT_CONFIDENCE_MIN || '0.5', 10);
 

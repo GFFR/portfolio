@@ -36,7 +36,7 @@ The 26 portfolios in the sitebuilderreport list fall into three buckets: clean S
 4. **`§ 03 · CASE FILES`** — Three deep dives: Brixel (zero-to-one), Gridwork (enterprise pivot), Avila Spaces (AI transformation). Each follows the same beat: *Ambiguity → Clarity → Execution → Outcome.* This is the structure of your career and your value prop.
 5. **`§ 04 · TOOLKIT`** — Interactive capability matrix. Six domains (Strategy, Product, Operations, Engineering, Design, AI). Click to filter the case files by which capability they exercised.
 6. **`§ 05 · SHIPPED FOR`** — Brand grid: Google, Schweppes, MTV, Nike, VW, Pandora, plus the Swiss banks/insurers from Brixel/Gridwork. Wordmark style, monochrome, animates on scroll.
-7. **`§ 06 · CONSOLE`** — Contact section as a command palette / terminal. Real input field accepting commands (`email`, `linkedin`, `book`, `cv`, `help`). Also clickable for the non-developer audience. Closes the loop on the concept.
+7. **`§ 06 · CHAT`** — Contact as a conversation with gram, an AI assistant grounded in Gonçalo's CV. Visitors ask about work, experience, availability, and contact — lead capture happens naturally in chat. Closes the loop on the concept: the site ships real tools, not slides about them.
 
 ## Voice rules
 
@@ -45,7 +45,7 @@ The 26 portfolios in the sitebuilderreport list fall into three buckets: clean S
 - Real numbers and named outcomes whenever possible.
 - Use your own line — "I am the bridge" — as the anchor.
 - Stay specific: name the partners (banks, insurers), name the brands, name the platforms.
-- Keep one line of dry humor in the console. Not more.
+- Keep one line of dry humor in gram's voice. Not more.
 
 ## Content blocks the site must include
 

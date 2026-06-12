@@ -2,7 +2,7 @@
   "name": "goncalofframalho-cv",
   "version": "1.0.0",
   "private": true,
-  "description": "Gonçalo Ramalho · Product Console — static CV site with chat API",
+  "description": "Gonçalo Ramalho — CV site with gram AI chat",
   "engines": {
     "node": ">=20"
   },

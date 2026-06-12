@@ -94,11 +94,11 @@
   text-transform: uppercase; letter-spacing: .12em;
   margin-top: 14px;
 }
-.hint a, .console-link {
+.hint a {
   color: var(--signal); text-decoration: none;
   transition: color .15s ease;
 }
-.hint a:hover, .console-link:hover { color: var(--text-strong); }
+.hint a:hover { color: var(--text-strong); }
 .hint kbd {
   border: 1px solid var(--line-2); border-bottom-width: 2px;
   padding: 1px 6px; border-radius: 4px;

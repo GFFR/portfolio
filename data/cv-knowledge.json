@@ -2,7 +2,7 @@
   "meta": {
     "version": "1.0.0",
     "updated": "2026-06-12",
-    "description": "Central knowledge base for the CV console chatbot. Edit this file to update what the bot can answer — no external scraping.",
+    "description": "Central knowledge base for gram, the CV assistant. Edit this file to update what the bot can answer — no external scraping.",
     "sources": ["goncalofframalho.com", "CREATIVE_BRIEF.md"]
   },
   "person": {
@@ -282,7 +282,7 @@
     },
     {
       "hook": "this site",
-      "fact": "This CV is literally a product console — the site is the proof that he ships internal tools, not just slides about them."
+      "fact": "This CV has a built-in AI assistant named gram — the site is the proof that he ships real tools, not just slides about them."
     },
     {
       "hook": "private repos",

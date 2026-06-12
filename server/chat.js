@@ -16,11 +16,11 @@ const { notifyLead } = require('./notify');
 const OPENROUTER_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const MODEL = process.env.OPENROUTER_MODEL || 'google/gemini-2.5-flash';
 const SITE_URL = process.env.SITE_URL || 'https://goncalofframalho.com';
-const SITE_TITLE = process.env.SITE_TITLE || 'Gonçalo Ramalho · Product Console';
+const SITE_TITLE = process.env.SITE_TITLE || 'Gonçalo Ramalho | Product & Innovation Leader';
 
 const HOLIDAY_MESSAGES = {
-  en: "gram is on holidays — he should return soon. ☀️ Commands still work fine. For Gonçalo directly: email mynameis@goncalofframalho.com (try `book`).",
-  pt: "o gram está de férias — ele volta em breve. ☀️ Os comandos continuam a funcionar. Para falar com o Gonçalo: mynameis@goncalofframalho.com (experimenta `book`).",
+  en: "gram is on holidays — he should return soon. ☀️ For Gonçalo directly: mynameis@goncalofframalho.com",
+  pt: "o gram está de férias — ele volta em breve. ☀️ Para falar com o Gonçalo: mynameis@goncalofframalho.com",
 };
 
 

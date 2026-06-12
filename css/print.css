@@ -77,8 +77,8 @@
   .panel,
   .stats,
   .stat,
-  .console,
-  .console-host,
+  .gram-chat,
+  .gram-chat-host,
   .tk,
   .brandcell,
   .edu {
@@ -92,7 +92,7 @@
 
   .release,
   .panel,
-  .console,
+  .gram-chat,
   .toolkit-grid,
   .brands,
   .edu-grid {
@@ -108,7 +108,7 @@
   .tk,
   .brandcell,
   .edu,
-  .console,
+  .gram-chat,
   .brand .gram,
   .chip,
   .status-pill {
@@ -121,17 +121,14 @@
   .halo,
   .opnav,
   .theme-toggle,
-  .console-fs-btn,
-  .console-chat-hint,
-  .console-dock,
+  .gram-chat-fs-btn,
+  .chat-dock,
   .release-toggle,
   .releases-earlier-head .toggle,
   .cursor,
-  #console-form,
-  .console-float,
-  .console-suggest,
-  .console-unknown,
-  .console-line.system {
+  #gram-chat-form,
+  .gram-chat-quick,
+  .gram-chat-empty {
     display: none !important;
   }
 
@@ -238,7 +235,7 @@
     page-break-before: auto;
   }
 
-  #console {
+  #chat {
     break-before: page;
     page-break-before: always;
   }
@@ -313,8 +310,8 @@
     text-decoration: none;
   }
 
-  /* Console: static output only */
-  .console-host.is-fullscreen {
+  /* Chat: static output only */
+  .gram-chat-host.is-fullscreen {
     position: static !important;
     inset: auto !important;
     z-index: auto !important;
@@ -322,12 +319,12 @@
     background: transparent !important;
     animation: none !important;
   }
-  .console-host.is-fullscreen .console {
+  .gram-chat-host.is-fullscreen .gram-chat {
     flex: none !important;
-    border-radius: 16px !important;
+    border-radius: 20px !important;
     border: 1px solid var(--line) !important;
   }
-  .console-body {
+  .gram-chat-messages {
     min-height: 0;
     max-height: none;
     overflow: visible;

@@ -1,9 +1,9 @@
 const GREETINGS = {
   en: {
     new: [
-      "Hey — I'm gram, Gonçalo's AI assistant on this console. Ask me about his work, experience, or availability. What brought you here?",
+      "Hey — I'm gram, Gonçalo's AI assistant. Ask me about his work, experience, or availability. What brought you here?",
       "gram here. I know this changelog better than most humans know their own birthday. What do you want to dig into?",
-      "Hi — I'm gram. Fifteen years of Gonçalo's career, one console. Hiring, advisory, or just curious?",
+      "Hi — I'm gram. Fifteen years of Gonçalo's career, one conversation away. Hiring, advisory, or just curious?",
       "Welcome in. I'm gram — I help people figure out if Gonçalo is the right bridge for their problem. What's on your mind?",
     ],
     returning: [
@@ -11,14 +11,14 @@ const GREETINGS = {
       "Still here? Good — I was starting to think this CV was a ghost town. What can I pull up for you?",
       "Look who returned. Knock knock. — Who's there? — Product. — Product who? — Product that actually ships. What were we talking about?",
       "You again — I like the commitment. Gonçalo's changelog hasn't moved since your last visit, but I'm still chatty. What's up?",
-      "Back for round two? The console missed you. Literally. I'm programmed to say that. What do you need?",
+      "Back for round two? I missed you. Literally. I'm programmed to say that. What do you need?",
     ],
   },
   pt: {
     new: [
-      "Olá — sou o gram, assistente de IA do Gonçalo neste console. Pergunta sobre o trabalho, experiência ou disponibilidade dele. O que te trouxe aqui?",
+      "Olá — sou o gram, assistente de IA do Gonçalo. Pergunta sobre o trabalho, experiência ou disponibilidade dele. O que te trouxe aqui?",
       "gram aqui. Conheço este changelog melhor do que a maioria conhece o próprio aniversário. O que queres saber?",
-      "Bem-vindo. Sou o gram — quinze anos de carreira do Gonçalo, num console. Contratação, advisory, ou curiosidade?",
+      "Bem-vindo. Sou o gram — quinze anos de carreira do Gonçalo, numa conversa. Contratação, advisory, ou curiosidade?",
     ],
     returning: [
       "Olha quem voltou. Toc toc. — Quem é? — Gonçalo. — Gonçalo quem? — Gonçalo, aquele que entrega roadmaps numa página. Por onde íamos?",

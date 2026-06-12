@@ -21,7 +21,7 @@ const chatLimiter = rateLimit({
   max: parseInt(process.env.RATE_LIMIT_MAX || '20', 10),
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: 'Too many questions. Take a breath — commands still work.' },
+  message: { error: 'Too many questions. Take a breath and try again shortly.' },
 });
 
 const greetingLimiter = rateLimit({
@@ -29,7 +29,7 @@ const greetingLimiter = rateLimit({
   max: parseInt(process.env.GREETING_RATE_LIMIT_MAX || '60', 10),
   standardHeaders: true,
   legacyHeaders: false,
-  message: { error: 'Too many chat opens. Wait a moment — commands still work.' },
+  message: { error: 'Too many chat opens. Wait a moment and try again.' },
 });
 
 app.get('/api/health', (_req, res) => {
@@ -84,7 +84,7 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Product Console running on :${PORT}`);
+  console.log(`goncalofframalho.com running on :${PORT}`);
   if (!process.env.OPENROUTER_API_KEY) {
     console.warn('OPENROUTER_API_KEY not set — chat disabled, static site only');
   }

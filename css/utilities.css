@@ -7,7 +7,7 @@ a.text-signal {
   transition: color .15s ease;
 }
 a.text-signal:hover { color: var(--text-strong); }
-.console-accent { color: var(--signal); }
-.console-accent:hover { color: var(--text-strong); }
-a.console-accent { text-decoration: none; }
-a.console-accent:hover { text-decoration: underline; text-underline-offset: 3px; }
+.gram-chat-accent { color: var(--signal); }
+.gram-chat-accent:hover { color: var(--text-strong); }
+a.gram-chat-accent { text-decoration: none; }
+a.gram-chat-accent:hover { text-decoration: underline; text-underline-offset: 3px; }

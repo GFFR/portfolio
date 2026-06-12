@@ -1,6 +1,5 @@
-/* ============ Console chat (streaming) ============ */
+/* ============ gram chat (streaming API client) ============ */
 (function () {
-  const ASK_PREFIX = 'ask ';
   const SESSION_KEY = 'gram-chat-session';
   let activeController = null;
   let sessionId = null;
@@ -50,20 +49,6 @@
     return sessionId;
   }
 
-  function isAskInput(raw) {
-    const t = (raw || '').trim();
-    if (!t) return false;
-    const lower = t.toLowerCase();
-    return lower.startsWith(ASK_PREFIX) || t.startsWith('?');
-  }
-
-  function parseAskInput(raw) {
-    const t = (raw || '').trim();
-    if (t.startsWith('?')) return t.slice(1).trim();
-    if (t.toLowerCase().startsWith(ASK_PREFIX)) return t.slice(ASK_PREFIX.length).trim();
-    return t;
-  }
-
   function detectLang(text) {
     const sample = (text || '').toLowerCase();
     if (/\b(olá|ola|como|qual|quem|onde|trabalho|experiência|experiencia|currículo|disponível|fala)\b/.test(sample)) return 'pt';
@@ -78,30 +63,31 @@
       .replace(/>/g, '&gt;');
   }
 
-  function linkifyConsole(text) {
+  function linkify(text) {
     const escaped = escapeHtml(text);
     return escaped
-      .replace(/`([^`]+)`/g, '<span class="console-accent">$1</span>')
-      .replace(/(goncaloramalho88@gmail\.com)/g, '<a class="console-accent" href="mailto:$1">$1</a>');
+      .replace(/`([^`]+)`/g, '<span class="gram-chat-accent">$1</span>')
+      .replace(/(mynameis@goncalofframalho\.com)/g, '<a class="gram-chat-accent" href="mailto:$1">$1</a>')
+      .replace(/(goncaloramalho88@gmail\.com)/g, '<a class="gram-chat-accent" href="mailto:$1">$1</a>');
   }
 
-  function createChatLine(out) {
+  function createGramLine(out) {
     const line = document.createElement('div');
-    line.className = 'console-line chat gram';
+    line.className = 'gram-chat-msg gram';
     line.innerHTML =
-      '<span class="chat-label chat-label-gram" aria-hidden="true">gram</span>' +
-      '<span class="chat-body">' +
-        '<span class="out chat-out"></span>' +
-        '<span class="chat-typing" role="status" aria-label="typing">' +
-          '<span class="chat-typing-dot"></span>' +
-          '<span class="chat-typing-dot"></span>' +
-          '<span class="chat-typing-dot"></span>' +
+      '<span class="gram-chat-label gram-chat-label-gram" aria-hidden="true">gram</span>' +
+      '<span class="gram-chat-bubble">' +
+        '<span class="gram-chat-out"></span>' +
+        '<span class="gram-chat-typing" role="status" aria-label="typing">' +
+          '<span class="gram-chat-typing-dot"></span>' +
+          '<span class="gram-chat-typing-dot"></span>' +
+          '<span class="gram-chat-typing-dot"></span>' +
         '</span>' +
       '</span>';
     out.appendChild(line);
-    out.classList.add('has-chat-thread');
+    out.classList.add('has-thread');
     out.scrollTop = out.scrollHeight;
-    return line.querySelector('.chat-out');
+    return line.querySelector('.gram-chat-out');
   }
 
   function scrollOut(out) {
@@ -111,7 +97,7 @@
   const STREAM_TIMEOUT_MS = 45000;
 
   function parseHttpError(errText) {
-    let message = 'Could not reach chat. Try `email`.';
+    let message = 'Could not reach gram. Try again in a moment.';
     const dataMatch = errText.match(/^data:\s*(.+)$/m);
     if (dataMatch) {
       try {
@@ -163,7 +149,7 @@
 
         if ((event === 'token' || event === 'message') && data.text) {
           fullText += data.text;
-          outEl.innerHTML = linkifyConsole(fullText);
+          outEl.innerHTML = linkify(fullText);
           scrollOut(out);
         } else if (event === 'error') {
           line.classList.add('warn');
@@ -185,8 +171,8 @@
   async function streamFromEndpoint(endpoint, body, out) {
     if (activeController) activeController.abort();
 
-    const outEl = createChatLine(out);
-    const line = outEl.closest('.console-line');
+    const outEl = createGramLine(out);
+    const line = outEl.closest('.gram-chat-msg');
     line.classList.add('is-streaming');
     let fullText = '';
     let timedOut = false;
@@ -218,7 +204,7 @@
 
       if (!fullText.trim()) {
         line.classList.add('warn');
-        outEl.textContent = 'No response — try again or use `email`.';
+        outEl.textContent = 'No response — try again or email mynameis@goncalofframalho.com.';
       }
     } catch (err) {
       if (err.name === 'AbortError') {
@@ -231,7 +217,7 @@
         return fullText;
       }
       line.classList.add('warn');
-      outEl.textContent = 'Connection lost. Commands still work — try `email`.';
+      outEl.textContent = 'Connection lost — check your network and try again.';
     } finally {
       clearTimeout(timeoutId);
       line?.classList.remove('is-streaming');
@@ -242,20 +228,14 @@
     return fullText;
   }
 
-  async function greeting(ctx) {
-    const { out } = ctx;
+  async function greeting(out) {
     const lang = (typeof navigator !== 'undefined' && navigator.language || '').toLowerCase().startsWith('pt') ? 'pt' : 'en';
     await streamFromEndpoint('/api/chat/greeting', { lang, sessionId: getSessionId() }, out);
   }
 
-  async function ask(question, ctx) {
-    const { out, print } = ctx;
+  async function ask(question, out) {
     const q = (question || '').trim();
-
-    if (!q) {
-      print('usage · type <span class="console-accent">chat</span> to enter chat mode, or <span class="console-accent">chat &lt;question&gt;</span> / <span class="console-accent">? &lt;question&gt;</span>', 'warn');
-      return;
-    }
+    if (!q) return;
 
     await streamFromEndpoint('/api/chat', {
       message: q,
@@ -264,9 +244,7 @@
     }, out);
   }
 
-  window.ConsoleChat = {
-    isAskInput,
-    parseAskInput,
+  window.GramChat = {
     ask,
     greeting,
     getSessionId,
